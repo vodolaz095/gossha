@@ -1,0 +1,38 @@
+#!/bin/sh
+
+echo "GoSSHa custom script test"
+
+if [ "$GOSSHA_USERNAME" ] ; then
+    echo "Remote user name: $GOSSHA_USERNAME"
+else
+    echo "Unable to get username from GOSSHA_USERNAME environment variable!"
+    exit 1
+fi
+
+if [ "$GOSSHA_HOSTNAME" ] ; then
+    echo "Remote host: $GOSSHA_HOSTNAME"
+else
+    echo "Unable to get hostname from GOSSHA_HOSTNAME environment variable!"
+    exit 1
+fi
+
+if [ "$GOSSHA_IP" ] ; then
+    echo "Remote ip: $GOSSHA_IP"
+else
+    echo "Unable to get IP from GOSSHA_IP environment variable!"
+    exit 1
+fi
+
+if [ "$GOSSHA_ROOT" ] ; then
+    if [ "$GOSSHA_ROOT" == "true" ]; then
+        echo "You are root!"
+    else 
+        echo "You are not root!"
+    fi
+else
+    echo "Unable to get permissions from GOSSHA_ROOT environment variable!"
+    exit 1
+fi
+
+
+uptime

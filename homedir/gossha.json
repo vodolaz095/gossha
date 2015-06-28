@@ -1,0 +1,11 @@
+{
+  "port": 27015,
+  "debug": false,
+  "driver": "sqlite3",
+  "connectionString": "/home/vodolaz095/.gossha/gossha.db",
+  "sshPublicKeyPath": "/home/vodolaz095/.ssh/id_rsa.pub",
+  "sshPrivateKeyPath": "/home/vodolaz095/.ssh/id_rsa",
+  "homedir": "/home/vodolaz095/.gossha",
+  "executeOnMessage": "",
+  "executeOnPrivateMessage": ""
+}

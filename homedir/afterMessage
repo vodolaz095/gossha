@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo "[$GOSSHA_USERNAME@$GOSSHA_HOSTNAME($GOSSHA_IP)]{`date`}:$GOSSHA_MESSAGE" >> $HOME/.gossha/chat.log
+

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo "[$GOSSHA_USERNAME@$GOSSHA_HOSTNAME($GOSSHA_IP) ---> $GOSSHA_TO]{`date`}:$GOSSHA_MESSAGE" >> $HOME/.gossha/pm.log
+
