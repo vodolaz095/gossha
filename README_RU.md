@@ -1,6 +1,10 @@
 GoSSHa
 =================================
 
+[![GoDoc](https://godoc.org/github.com/vodolaz095/gossha?status.svg)](https://godoc.org/github.com/vodolaz095/gossha)
+[![GoDoc](https://godoc.org/bitbucket.org/vodolaz095/gossha?status.svg)](https://godoc.org/bitbucket.org/vodolaz095/gossha)
+
+
 Кросплатформенный чат на основе SSH протокола.
 Данные хранятся в реляционных базах данных MySQL, PostgreSQL or Sqlite3.
 Поддерживаются публичные (хранятся в базе данных) и личные  сообщения.
