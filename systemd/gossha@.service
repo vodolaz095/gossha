@@ -1,0 +1,12 @@
+[Unit]
+Description=goSSHa for %i
+
+[Service]
+Type=simple
+User=%i
+ExecStart=/home/vodolaz095/bin/gossha
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
