@@ -13,12 +13,17 @@ Main addvantages
 =================================
 
 1) [Secure SHell protocol](https://en.wikipedia.org/wiki/Secure_Shell) is used to make all communications safe and secure.
+
 2) Users' profiles and messages are stored in relational databases in easy to manipulate format, so we can use 3rd party applications to work with them.
+
 3) Users can be authorized by passwords or private keys.
-4) We can start application listening on few addresses and ports on the same time. For example, listeing on `192.168.1.2:2222` on local area network, and on `193.41.32.25:27015`
-for uplink connections.
+
+4) We can start application listening on few addresses and ports on the same time. For example, listeing on `192.168.1.2:2222` on local area network, and on `193.41.32.25:27015` for uplink connections.
+
 5) Users can execute scripts defined by admin on behalf of users running the GoSSHa server.
+
 6) Application can run scripts after each public or private message, with senders name, ip, message exported as environment variables. See `homedir/` folder for examples
+
 7) Application is created in `Go` language, and can be build on many environments and architectures - `Linux`, `Microsoft Windows`, `MacOs`.
 
 Usage
