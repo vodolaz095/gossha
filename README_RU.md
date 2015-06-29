@@ -260,17 +260,19 @@ Can be enabled by `--debug=true` flag, or via `GOSSHA_DEBUG=true` environment va
 Установка из скомпилированных бинарных файлов
 =================================
 
+Вы можете скачать бинарные файлы с этого адреса 
+[https://github.com/vodolaz095/gossha/releases](https://github.com/vodolaz095/gossha/releases)
 
 При подтверждении подписи вывод должен быть примерно такой:
 
 ```shell
 
-	[vodolaz095@steel tmp]$ gpg --verify gossha.x86_64.sig gossha.x86_64
+		[vodolaz095@vodolaz095 build]$ gpg2 --verify md5sum.txt.sig md5sum.txt
+		gpg: Signature made Mon 29 Jun 2015 02:44:13 AM MSK using RSA key ID 994C6375
+		gpg: Good signature from "Anatoliy Ostroumov <ostroumov095@gmail.com>" [ultimate]
+		gpg:                 aka "[jpeg image of size 2756]" [ultimate]
+		gpg:                 aka "[jpeg image of size 3725]" [ultimate]
 
-	gpg: Signature made Wed 25 Mar 2015 01:01:55 AM MSK using RSA key ID 994C6375
-	gpg: Good signature from "Anatoliy Ostroumov <ostroumov095@gmail.com>"
-	gpg:                 aka "[jpeg image of size 2756]"
-	gpg:                 aka "[jpeg image of size 3725]"
 
 ```
 

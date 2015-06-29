@@ -246,17 +246,19 @@ Building from sources
 Installation via prebuild binaries
 =================================
 
+You can get compiled binaries from here
+[https://github.com/vodolaz095/gossha/releases](https://github.com/vodolaz095/gossha/releases)
 
 You can verify the signatures via `GPG` or `GPG2`. It have to be something like this:
 
 ```shell
 
-	[vodolaz095@steel tmp]$ gpg --verify gossha.x86_64.sig gossha.x86_64
+		[vodolaz095@vodolaz095 build]$ gpg2 --verify md5sum.txt.sig md5sum.txt
+		gpg: Signature made Mon 29 Jun 2015 02:44:13 AM MSK using RSA key ID 994C6375
+		gpg: Good signature from "Anatoliy Ostroumov <ostroumov095@gmail.com>" [ultimate]
+		gpg:                 aka "[jpeg image of size 2756]" [ultimate]
+		gpg:                 aka "[jpeg image of size 3725]" [ultimate]
 
-	gpg: Signature made Wed 25 Mar 2015 01:01:55 AM MSK using RSA key ID 994C6375
-	gpg: Good signature from "Anatoliy Ostroumov <ostroumov095@gmail.com>"
-	gpg:                 aka "[jpeg image of size 2756]"
-	gpg:                 aka "[jpeg image of size 3725]"
 
 ```
 
