@@ -3,6 +3,7 @@ package gossha
 import (
 	"fmt"
 	"golang.org/x/crypto/ssh"
+	"os"
 	"testing"
 	"time"
 )
@@ -15,8 +16,14 @@ func spawnServer() error {
 	RuntimeConfig.Debug = false
 	RuntimeConfig.Driver = "sqlite3"
 	RuntimeConfig.ConnectionString = ":memory:"
-	RuntimeConfig.SshPublicKeyPath = GetPublicKeyPath()
-	RuntimeConfig.SshPrivateKeyPath = GetPrivateKeyPath()
+	if os.Getenv("IS_TRAVIS") == "YES" {
+		RuntimeConfig.SshPublicKeyPath = "/home/travis/gopath/src/github.com/vodolaz095/gossha/test/gossha_test.pub"
+		RuntimeConfig.SshPrivateKeyPath = "/home/travis/gopath/src/github.com/vodolaz095/gossha/test/gossha_test"
+	} else {
+		RuntimeConfig.SshPublicKeyPath = GetPublicKeyPath()
+		RuntimeConfig.SshPrivateKeyPath = GetPrivateKeyPath()
+	}
+
 	RuntimeConfig.Homedir = GetHomeDir()
 	RuntimeConfig.ExecuteOnMessage = ""
 	RuntimeConfig.ExecuteOnPrivateMessage = ""
