@@ -80,7 +80,7 @@ func TestSqlite3LoginByUsernameAndPassword(t *testing.T) {
 
 func TestMysqlInitDatabase(t *testing.T) {
 	if os.Getenv("IS_TRAVIS") == "YES" {
-		err := InitDatabase("mysql", "travis:@/gossha_test?charset=utf8")
+		err := InitDatabase("mysql", "travis:@localhost/gossha_test?charset=utf8")
 		if err != nil {
 			t.Error(err.Error())
 		}
