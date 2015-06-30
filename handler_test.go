@@ -2,7 +2,7 @@ package gossha
 
 import (
 	"net"
-	"os"
+	//	"os"
 	"testing"
 )
 
