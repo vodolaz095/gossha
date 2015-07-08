@@ -1,7 +1,7 @@
 package main
 
 import (
-	gossha "./../" 
+	"github.com/vodolaz095/gossha"
 	"fmt"
 	"net/http"
 	_ "net/http/pprof"
