@@ -39,10 +39,11 @@ if go test -v; then
 		zip $archiv.$semver.zip README_RU.md
 		zip $archiv.$semver.zip CHANGELOG.md
 		zip $archiv.$semver.zip homedir/ -r
+		zip $archiv.$semver.zip systemd/ -r
 		echo "Creating .zip ok!"
-		tar -czvf $archiv.$semver.tar.gz build/gossha README.md README_RU.md CHANGELOG.md homedir/
+		tar -czvf $archiv.$semver.tar.gz  build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/
 		echo "Creating .tar.gz ok!"
-		tar -cjvf $archiv.$semver.tar.bz2 build/gossha README.md README_RU.md CHANGELOG.md homedir/
+		tar -cjvf $archiv.$semver.tar.bz2 build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/
 		rm build/gossha -f
 	else
 		echo "Build failed!"
