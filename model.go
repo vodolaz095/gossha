@@ -30,11 +30,10 @@ func (u *User) SetPassword(password string) error {
 	slt, err := GenSalt()
 	if err != nil {
 		return err
-	} else {
-		u.Salt = slt
-		u.Password = Hash(fmt.Sprintf("%v%v", password, slt))
-		return nil
 	}
+	u.Salt = slt
+	u.Password = Hash(fmt.Sprintf("%v%v", password, slt))
+	return nil
 }
 
 // CheckPassword returns true, if we quessed it properly

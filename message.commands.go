@@ -80,10 +80,8 @@ func (h *Handler) SendMessage(connection ssh.Channel, term *terminal.Terminal, i
 		chld.Start()
 		//fmt.Println("Executing", output)
 		return err
-	} else {
-		return nil
 	}
-
+	return nil
 }
 
 //SendPrivateMessage delivers message to the reciever only, message is not saved into persistent datastorage
@@ -169,10 +167,8 @@ func (h *Handler) SendPrivateMessage(connection ssh.Channel, term *terminal.Term
 		chld.Start()
 		//fmt.Println("Executing", output)
 		return err
-	} else {
-		return nil
 	}
-
+	return nil
 }
 
 // Broadcast sends Message in form of Notification
