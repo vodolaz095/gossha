@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bitbucket.org/vodolaz095/gossha"
+	gossha "./../" 
 	"fmt"
 	"net/http"
 	_ "net/http/pprof"
