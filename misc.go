@@ -31,7 +31,7 @@ func MakeDSNHelp() string {
 	dsnHelpArr = append(dsnHelpArr, "Database connection string. Examples:")
 	dsnHelpArr = append(dsnHelpArr, "   	--driver=sqlite3 --connectionString=/var/lib/gossha/gossha.db")
 	dsnHelpArr = append(dsnHelpArr, "   	--driver=sqlite3 --connectionString=:memory:")
-	dsnHelpArr = append(dsnHelpArr, "   	--driver=mysql --connectionString=user:password@/dbname?charset=utf8&parseTime=True&loc=Local")
+	dsnHelpArr = append(dsnHelpArr, "   	--driver=mysql --connectionString=user:password@localhost/dbname?charset=utf8&parseTime=True&loc=Local")
 	dsnHelpArr = append(dsnHelpArr, "   	--driver=postgres --connectionString='user=gorm dbname=gorm sslmode=disable'")
 	dsnHelpArr = append(dsnHelpArr, "   	--driver=postgres --connectionString=postgres://pqgotest:password@localhost/pqgotest?sslmode=verify-full")
 	dsnHelp := strings.Join(dsnHelpArr, "\n")

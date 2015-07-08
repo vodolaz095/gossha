@@ -1,6 +1,7 @@
 GoSSHa
 =================================
 
+[![Build Status](https://travis-ci.org/vodolaz095/gossha.svg)](https://travis-ci.org/vodolaz095/gossha)
 [![GoDoc](https://godoc.org/github.com/vodolaz095/gossha?status.svg)](https://godoc.org/github.com/vodolaz095/gossha)
 [![GoDoc](https://godoc.org/bitbucket.org/vodolaz095/gossha?status.svg)](https://godoc.org/bitbucket.org/vodolaz095/gossha)
 

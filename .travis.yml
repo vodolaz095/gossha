@@ -1,0 +1,18 @@
+language: go
+
+go:
+  - 1.2
+  - 1.3
+  - 1.4
+  - tip
+
+before_script:
+  - psql -c 'create database gossha_test;' -U postgres
+  - mysql -e 'create database gossha_test;'
+
+
+script: go test
+
+services:
+  - postgresql
+  - mysql
