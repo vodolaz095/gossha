@@ -19,11 +19,11 @@ type KnownCommand struct {
 
 // Handler is controller, that represents current user session
 type Handler struct {
-	SessionId          string
+	SessionID          string
 	KeyFingerPrint     ssh.PublicKey
-	Ip                 string
+	IP                 string
 	Hostname           string
-	LastShownMessageId int64
+	LastShownMessageID int64
 	CurrentUser        User
 	Nerve              chan Notification
 	KnownCommands      map[string]KnownCommand
@@ -57,7 +57,7 @@ func (h *Handler) addKnownCommand(key, commandName, help string) {
 
 // PrintHelpForUser outputs help for current user
 func (h *Handler) PrintHelpForUser(connection ssh.Channel, term *terminal.Terminal, command []string) error {
-	cmds := make([]string, 0)
+	var cmds []string
 	cmds = append(cmds, "GoSSHa - very secure chat.\n\r")
 	cmds = append(cmds, fmt.Sprintf("Build #%v \n\r", VERSION))
 	cmds = append(cmds, fmt.Sprintf("Version: %v \n\r", SUBVERSION))
@@ -82,7 +82,7 @@ func (h *Handler) PrintHelpForUser(connection ssh.Channel, term *terminal.Termin
  * and call commands depending on input
  */
 
-// AutoCompleteCallback, if non-null, is called for each keypress with
+// AutoCompleteCallback is called for each keypress with
 // the full input line and the current position of the cursor (in
 // bytes, as an index into |line|). If it returns ok=false, the key
 // press is processed normally. Otherwise it returns a replacement line

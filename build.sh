@@ -1,6 +1,6 @@
 #!/bin/sh
 
-semver="1.0.0"
+semver="1.0.1"
 ver="$semver.`git log --format='%h' -n 1`.`uname`.`uname -m`"
 subver="Build #`git log --format='%h' -n 1` on `hostname`.`uname`.`uname -m` on `date`"
 archiv="build/gossha.`uname`.`uname -m`"

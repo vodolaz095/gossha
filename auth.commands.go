@@ -29,13 +29,13 @@ func (h *Handler) LoginByUsernameAndPassword(c ssh.ConnMetadata, password string
 	}
 
 	if user.CheckPassword(password) {
-		h.SessionId = string(c.SessionID())
+		h.SessionID = string(c.SessionID())
 		h.CurrentUser = user
-		h.Ip = ip
+		h.IP = ip
 		h.Hostname = hostname
 		h.CurrentUser.LastSeenOnline = time.Now()
 		mesg := Message{
-			Ip:        h.Ip,
+			IP:        h.IP,
 			Hostname:  h.Hostname,
 			UserID:    h.CurrentUser.ID,
 			Message:   "appeared online!",
@@ -45,7 +45,7 @@ func (h *Handler) LoginByUsernameAndPassword(c ssh.ConnMetadata, password string
 		h.Broadcast(&mesg, true, false)
 		session := Session{
 			UserID:    user.ID,
-			Ip:        ip,
+			IP:        ip,
 			Hostname:  hostname,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
@@ -55,9 +55,8 @@ func (h *Handler) LoginByUsernameAndPassword(c ssh.ConnMetadata, password string
 			return err
 		}
 		return DB.Table("user").Save(&user).Error
-	} else {
-		return fmt.Errorf("Wrong password for user %v!", name)
 	}
+	return fmt.Errorf("Wrong password for user %v!", name)
 }
 
 // LoginByPublicKey is a authorization callback for ssh config
@@ -74,28 +73,26 @@ func (h *Handler) LoginByPublicKey(c ssh.ConnMetadata, publicKey string) error {
 	if err != nil {
 		if err == gorm.RecordNotFound {
 			return fmt.Errorf("Public key is not known!")
-		} else {
-			return err
 		}
+		return err
 	}
 	err = DB.Table("user").Where("id=? AND name = ?", key.UserID, c.User()).First(&user).Error
 	if err != nil {
 		if err == gorm.RecordNotFound {
 			return fmt.Errorf("User %v not found!", c.User())
-		} else {
-			return err
 		}
+		return err
 	}
 
-	h.SessionId = string(c.SessionID())
+	h.SessionID = string(c.SessionID())
 	h.CurrentUser = user
-	h.Ip = ip
+	h.IP = ip
 	h.Hostname = hostname
 	h.CurrentUser.LastSeenOnline = time.Now()
 
 	mesg := Message{
 		//Id:        0,
-		Ip:        h.Ip,
+		IP:        h.IP,
 		Hostname:  h.Hostname,
 		UserID:    h.CurrentUser.ID,
 		Message:   "appeared online!",
@@ -106,7 +103,7 @@ func (h *Handler) LoginByPublicKey(c ssh.ConnMetadata, publicKey string) error {
 
 	session := Session{
 		UserID:    user.ID,
-		Ip:        ip,
+		IP:        ip,
 		Hostname:  hostname,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -141,9 +138,9 @@ func (h *Handler) MakeSSHConfig() *ssh.ServerConfig {
 		},
 		NoClientAuth: false,
 	}
-	privateBytes, err := ioutil.ReadFile(RuntimeConfig.SshPrivateKeyPath)
+	privateBytes, err := ioutil.ReadFile(RuntimeConfig.SSHPrivateKeyPath)
 	if err != nil {
-		panic("Failed to load private key from " + RuntimeConfig.SshPrivateKeyPath)
+		panic("Failed to load private key from " + RuntimeConfig.SSHPrivateKeyPath)
 	}
 	private, err := ssh.ParsePrivateKey(privateBytes)
 	if err != nil {

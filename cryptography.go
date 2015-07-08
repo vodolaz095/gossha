@@ -22,7 +22,7 @@ func Hash(input string) string {
 	return fmt.Sprintf("%x", sha256.Sum256([]byte(input)))
 }
 
-// GenSalt() generates random string
+// GenSalt generates random string
 func GenSalt() (string, error) {
 	return Hash(randSeq(64)), nil
 }

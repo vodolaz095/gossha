@@ -12,7 +12,7 @@ import (
 func Greet() string {
 	g := "ICBfX19fICAgICAgX19fXyBfX19fICBfICAgXyAgICAgICAKIC8gX19ffCBfX18vIF9fXy8gX19ffHwgfCB8IHwgX18gXyAKfCB8ICBfIC8gXyBcX19fIFxfX18gXHwgfF98IHwvIF9gIHwKfCB8X3wgfCAoXykgfF9fKSB8X18pIHwgIF8gIHwgKF98IHwKIFxfX19ffFxfX18vX19fXy9fX19fL3xffCB8X3xcX18sX3wKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAK"
 	gg, _ := base64.StdEncoding.DecodeString(g)
-	ggg := make([]string, 0)
+	var ggg []string
 	ggg = append(ggg, string(gg))
 	ggg = append(ggg, "Persistent SSH based chat for the ones, who cares.")
 	ggg = append(ggg, fmt.Sprintf("Build: %v", VERSION))

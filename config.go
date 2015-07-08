@@ -11,17 +11,20 @@ import (
 
 var sep = string(os.PathSeparator)
 
+// Config is the object, that stories application parameters, populated from
+// config file from `/etc/gossha/gossha.json`,`$HOME/.gossha/gossha.json` environment
+// values prepended by prefix `GOSSHA_` or flags.
 type Config struct {
-	Port                    int  `json:"port"`
-	Debug                   bool `json:"debug"`
-	BindTo                  []string
-	Driver                  string `json:"driver"`
-	ConnectionString        string `json:"connectionString"`
-	SshPublicKeyPath        string `json:"sshPublicKeyPath"`
-	SshPrivateKeyPath       string `json:"sshPrivateKeyPath"`
-	Homedir                 string `json:"homedir"`
-	ExecuteOnMessage        string `json:"executeOnMessage"`
-	ExecuteOnPrivateMessage string `json:"executeOnPrivateMessage"`
+	Port                    int      `json:"port"`
+	Debug                   bool     `json:"debug"`
+	BindTo                  []string `json:"bindTo"`
+	Driver                  string   `json:"driver"`
+	ConnectionString        string   `json:"connectionString"`
+	SSHPublicKeyPath        string   `json:"sshPublicKeyPath"`
+	SSHPrivateKeyPath       string   `json:"sshPrivateKeyPath"`
+	Homedir                 string   `json:"homedir"`
+	ExecuteOnMessage        string   `json:"executeOnMessage"`
+	ExecuteOnPrivateMessage string   `json:"executeOnPrivateMessage"`
 }
 
 // GetHomeDir returns the current working directory of application,
@@ -34,7 +37,7 @@ func GetHomeDir() string {
 	return fmt.Sprintf("%v%v.gossha", hmdr, sep)
 }
 
-// GetHomeDir returns the current sqlite database path of application,
+// GetDatabasePath returns the current sqlite database path of application,
 // usually the $HOME/.gossha/gossha.db
 func GetDatabasePath() string {
 	hmdr, err := homedir.Dir()
@@ -110,8 +113,8 @@ func InitConfig() (Config, []string, error) {
 	config.Debug = viper.GetBool("debug")
 	config.Driver = viper.GetString("driver")
 	config.ConnectionString = viper.GetString("connectionString")
-	config.SshPublicKeyPath = viper.GetString("sshPublicKeyPath")
-	config.SshPrivateKeyPath = viper.GetString("sshPrivateKeyPath")
+	config.SSHPublicKeyPath = viper.GetString("sshPublicKeyPath")
+	config.SSHPrivateKeyPath = viper.GetString("sshPrivateKeyPath")
 	config.Homedir = viper.GetString("homedir")
 	config.ExecuteOnMessage = viper.GetString("executeOnMessage")
 	config.ExecuteOnPrivateMessage = viper.GetString("executeOnPrivateMessage")
@@ -141,7 +144,7 @@ func InitConfig() (Config, []string, error) {
 				return config, flag.Args(), err
 			}
 
-			configData, err := config.Dump()
+			configData, err := config.dump()
 			if err != nil {
 				return config, flag.Args(), err
 			}
@@ -152,14 +155,14 @@ func InitConfig() (Config, []string, error) {
 				return config, flag.Args(), err
 			}
 			return config, flag.Args(), nil
-		} else {
-			return config, flag.Args(), err
 		}
+		return config, flag.Args(), err
+
 	}
 	return config, flag.Args(), nil
 }
 
-func (c *Config) Dump() (string, error) {
+func (c *Config) dump() (string, error) {
 	data, err := json.MarshalIndent(c, "", "  ")
 	return string(data), err
 }
