@@ -1,5 +1,5 @@
 {
-	"ImportPath": "bitbucket.org/vodolaz095/gossha",
+	"ImportPath": "github.com/vodolaz095/gossha",
 	"GoVersion": "go1.4.2",
 	"Deps": [
 		{
@@ -13,12 +13,12 @@
 		},
 		{
 			"ImportPath": "github.com/go-sql-driver/mysql",
-			"Comment": "v1.2-97-g0cc29e9",
-			"Rev": "0cc29e9fe8e25c2c58cf47bcab566e029bbaa88b"
+			"Comment": "v1.2-112-gfb72997",
+			"Rev": "fb7299726d2e68745a8805b14f2ff44b5c2cfa84"
 		},
 		{
 			"ImportPath": "github.com/jinzhu/gorm",
-			"Rev": "371cd41204f51c6236193dd82e75edf20b46961d"
+			"Rev": "5663048f137b961f9b1bac6a10227096aa36b0bf"
 		},
 		{
 			"ImportPath": "github.com/kr/pretty",
@@ -31,8 +31,8 @@
 		},
 		{
 			"ImportPath": "github.com/lib/pq",
-			"Comment": "go1.0-cutoff-47-g93e9980",
-			"Rev": "93e9980741c9e593411b94e07d5bad8cfb4809db"
+			"Comment": "go1.0-cutoff-56-gdc50b6a",
+			"Rev": "dc50b6ad2d3ee836442cf3389009c7cd1e64bb43"
 		},
 		{
 			"ImportPath": "github.com/magiconair/properties",
@@ -41,7 +41,7 @@
 		},
 		{
 			"ImportPath": "github.com/mattn/go-sqlite3",
-			"Rev": "542ae647f8601bafd96233961b150cae198e0295"
+			"Rev": "b4142c444a8941d0d92b0b7103a24df9cd815e42"
 		},
 		{
 			"ImportPath": "github.com/mitchellh/go-homedir",
