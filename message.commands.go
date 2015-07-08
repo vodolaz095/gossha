@@ -201,7 +201,7 @@ func (h *Handler) PrivateMessage(name string, mesg *Message) {
 
 // GetMessages outputs recent messages in form of Notification array
 func (h *Handler) GetMessages(limit int) ([]Notification, error) {
-	ret := make([]Notification, 0)
+	var ret []Notification
 	var messages []Message
 	var l int64
 	DB.Table("message").Preload("User").Where("message.id > ?", h.LastShownMessageID).Limit(limit).Order("message.id asc").Find(&messages)

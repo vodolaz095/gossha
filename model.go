@@ -2,10 +2,10 @@ package gossha
 
 import (
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql" //See https://github.com/jinzhu/gorm#initialize-database
 	"github.com/jinzhu/gorm"
-	_ "github.com/lib/pq"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"           //See https://github.com/jinzhu/gorm#initialize-database
+	_ "github.com/mattn/go-sqlite3" //See https://github.com/jinzhu/gorm#initialize-database
 	"time"
 )
 
