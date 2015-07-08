@@ -17,11 +17,11 @@ func spawnServer() error {
 	RuntimeConfig.Driver = "sqlite3"
 	RuntimeConfig.ConnectionString = ":memory:"
 	if os.Getenv("IS_TRAVIS") == "YES" {
-		RuntimeConfig.SshPublicKeyPath = "/home/travis/gopath/src/github.com/vodolaz095/gossha/test/gossha_test.pub"
-		RuntimeConfig.SshPrivateKeyPath = "/home/travis/gopath/src/github.com/vodolaz095/gossha/test/gossha_test"
+		RuntimeConfig.SSHPublicKeyPath = "/home/travis/gopath/src/github.com/vodolaz095/gossha/test/gossha_test.pub"
+		RuntimeConfig.SSHPrivateKeyPath = "/home/travis/gopath/src/github.com/vodolaz095/gossha/test/gossha_test"
 	} else {
-		RuntimeConfig.SshPublicKeyPath = GetPublicKeyPath()
-		RuntimeConfig.SshPrivateKeyPath = GetPrivateKeyPath()
+		RuntimeConfig.SSHPublicKeyPath = GetPublicKeyPath()
+		RuntimeConfig.SSHPrivateKeyPath = GetPrivateKeyPath()
 	}
 
 	RuntimeConfig.Homedir = GetHomeDir()

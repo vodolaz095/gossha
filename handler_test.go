@@ -57,10 +57,10 @@ func TestSqlite3LoginByUsernameAndPassword(t *testing.T) {
 	if h1.CurrentUser.Name != "testUser" {
 		t.Error("We have authorized wrong user via Handler.LoginByUsernameAndPassword!")
 	}
-	if h1.SessionId != "lalalalala" {
+	if h1.SessionID != "lalalalala" {
 		t.Error("Session Id is not set via Handler.LoginByUsernameAndPassword!")
 	}
-	if h1.Ip != "127.0.0.1" {
+	if h1.IP != "127.0.0.1" {
 		t.Error("Remote IP  is not set via Handler.LoginByUsernameAndPassword!")
 	}
 
