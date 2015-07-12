@@ -2,10 +2,10 @@ package gossha
 
 import (
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql" //See https://github.com/jinzhu/gorm#initialize-database
 	"github.com/jinzhu/gorm"
-	_ "github.com/lib/pq"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"           //See https://github.com/jinzhu/gorm#initialize-database
+	_ "github.com/mattn/go-sqlite3" //See https://github.com/jinzhu/gorm#initialize-database
 	"time"
 )
 
@@ -30,11 +30,10 @@ func (u *User) SetPassword(password string) error {
 	slt, err := GenSalt()
 	if err != nil {
 		return err
-	} else {
-		u.Salt = slt
-		u.Password = Hash(fmt.Sprintf("%v%v", password, slt))
-		return nil
 	}
+	u.Salt = slt
+	u.Password = Hash(fmt.Sprintf("%v%v", password, slt))
+	return nil
 }
 
 // CheckPassword returns true, if we quessed it properly
@@ -72,9 +71,8 @@ func BanUser(name string) error {
 	if err != nil {
 		if err == gorm.RecordNotFound {
 			return fmt.Errorf("User %v not found!", name)
-		} else {
-			return err
 		}
+		return err
 	}
 	err = DB.Delete(&user).Error
 	if err != nil {
@@ -168,7 +166,7 @@ type Message struct {
 	User      User
 	UserID    int64  // Foreign key for User (belongs to)
 	Message   string `sql:"size:255"`
-	Ip        string `sql:"size:65"`
+	IP        string `sql:"size:65"`
 	Hostname  string `sql:"size:65"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -193,7 +191,7 @@ type Session struct {
 	ID        int64
 	User      User
 	UserID    int64  // Foreign key for User (belongs to)
-	Ip        string `sql:"size:65"`
+	IP        string `sql:"size:65"`
 	Hostname  string `sql:"size:65"`
 	CreatedAt time.Time
 	UpdatedAt time.Time

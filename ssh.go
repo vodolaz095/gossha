@@ -107,7 +107,7 @@ func handleChannel(newChannel ssh.NewChannel, handler *Handler) {
 		}()
 	*/
 
-	Board[handler.SessionId] = handler
+	Board[handler.SessionID] = handler
 	term := terminal.NewTerminal(connection, handler.PrintPrompt())
 	term.AutoCompleteCallback = handler.AutoCompleteCallback
 	handler.PrintHelpForUser(connection, term, []string{})
@@ -127,7 +127,7 @@ func handleChannel(newChannel ssh.NewChannel, handler *Handler) {
 	go func() {
 		defer func() {
 			connection.Close()
-			delete(Board, handler.SessionId)
+			delete(Board, handler.SessionID)
 			handler.Leave(connection, term, []string{})
 		}()
 		for {

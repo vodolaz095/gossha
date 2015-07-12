@@ -26,7 +26,7 @@ func (h *Handler) SendMessage(connection ssh.Channel, term *terminal.Terminal, i
 	}
 
 	mesg := Message{
-		Ip:        h.Ip,
+		IP:        h.IP,
 		Hostname:  h.Hostname,
 		UserID:    h.CurrentUser.ID,
 		Message:   comment,
@@ -34,7 +34,7 @@ func (h *Handler) SendMessage(connection ssh.Channel, term *terminal.Terminal, i
 		UpdatedAt: time.Now(),
 	}
 	err := DB.Table("message").Create(&mesg).Error
-	h.LastShownMessageId = mesg.ID
+	h.LastShownMessageID = mesg.ID
 	if err != nil {
 		return err
 	}
@@ -55,7 +55,7 @@ func (h *Handler) SendMessage(connection ssh.Channel, term *terminal.Terminal, i
 		if err != nil {
 			return err
 		}
-		err = os.Setenv("GOSSHA_IP", h.Ip)
+		err = os.Setenv("GOSSHA_IP", h.IP)
 		if err != nil {
 			return err
 		}
@@ -80,10 +80,8 @@ func (h *Handler) SendMessage(connection ssh.Channel, term *terminal.Terminal, i
 		chld.Start()
 		//fmt.Println("Executing", output)
 		return err
-	} else {
-		return nil
 	}
-
+	return nil
 }
 
 //SendPrivateMessage delivers message to the reciever only, message is not saved into persistent datastorage
@@ -100,7 +98,7 @@ func (h *Handler) SendPrivateMessage(connection ssh.Channel, term *terminal.Term
 		if v.CurrentUser.Name == name {
 			to = v.CurrentUser.Name
 			mesg := Message{
-				Ip:        h.Ip,
+				IP:        h.IP,
 				Hostname:  h.Hostname,
 				UserID:    h.CurrentUser.ID,
 				Message:   input,
@@ -138,7 +136,7 @@ func (h *Handler) SendPrivateMessage(connection ssh.Channel, term *terminal.Term
 		if err != nil {
 			return err
 		}
-		err = os.Setenv("GOSSHA_IP", h.Ip)
+		err = os.Setenv("GOSSHA_IP", h.IP)
 		if err != nil {
 			return err
 		}
@@ -169,17 +167,15 @@ func (h *Handler) SendPrivateMessage(connection ssh.Channel, term *terminal.Term
 		chld.Start()
 		//fmt.Println("Executing", output)
 		return err
-	} else {
-		return nil
 	}
-
+	return nil
 }
 
 // Broadcast sends Message in form of Notification
 // to all other Handler's, each of thems corresponding authorized User.
 func (h *Handler) Broadcast(mesg *Message, isSystem, isChat bool) {
 	for k, v := range Board {
-		if k != h.SessionId {
+		if k != h.SessionID {
 			v.Nerve <- Notification{
 				User:             h.CurrentUser,
 				Message:          *mesg,
@@ -195,7 +191,7 @@ func (h *Handler) Broadcast(mesg *Message, isSystem, isChat bool) {
 // Handler.CurrentUser.Name equal to first argument
 func (h *Handler) PrivateMessage(name string, mesg *Message) {
 	for k, v := range Board {
-		if k != h.SessionId {
+		if k != h.SessionID {
 			if h.CurrentUser.Name == name {
 				v.Nerve <- Notification{User: h.CurrentUser, Message: *mesg, IsSystem: false, IsChat: false, IsPrivateMessage: true}
 			}
@@ -205,16 +201,16 @@ func (h *Handler) PrivateMessage(name string, mesg *Message) {
 
 // GetMessages outputs recent messages in form of Notification array
 func (h *Handler) GetMessages(limit int) ([]Notification, error) {
-	ret := make([]Notification, 0)
+	var ret []Notification
 	var messages []Message
 	var l int64
-	DB.Table("message").Preload("User").Where("message.id > ?", h.LastShownMessageId).Limit(limit).Order("message.id asc").Find(&messages)
+	DB.Table("message").Preload("User").Where("message.id > ?", h.LastShownMessageID).Limit(limit).Order("message.id asc").Find(&messages)
 	for _, m := range messages {
 		ret = append(ret, Notification{User: m.User, Message: m, IsSystem: false, IsChat: true})
 	}
 
 	if len(messages) > 0 {
-		h.LastShownMessageId = l
+		h.LastShownMessageID = l
 	}
 	return ret, nil
 }
