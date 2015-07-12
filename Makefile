@@ -3,7 +3,7 @@ export arch=$(shell uname).$(shell uname -m)
 export gittip=$(shell git log --format='%h' -n 1)
 export ver=$(semver).$(gittip).$(arch)
 export subver=$(shell hostname).$(arch) on $(space)$(shell date)
-export archiv=build/gossha.$(arch)
+export archiv=build/gossha.$(arch).$(semver)
 
 
 all: build
@@ -34,9 +34,9 @@ build: clear engrave deps test
 	go build -o "build/gossha" app/gossha.go
 
 pack: build
-	zip $(archiv).$(semver).zip  build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/ -r
-	tar -czvf $(archiv).$(semver).tar.gz  build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/
-	tar -cjvf $(archiv).$(semver).tar.bz2 build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/
+	zip $(archiv).zip  build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/ -r
+	tar -czvf $(archiv).tar.gz  build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/
+	tar -cjvf $(archiv).tar.bz2 build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/
 
 sign:
 	rm build/*.txt -f
