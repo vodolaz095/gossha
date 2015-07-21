@@ -1,4 +1,4 @@
-export semver=1.0.2
+export semver=1.0.3
 export arch=$(shell uname).$(shell uname -m)
 export gittip=$(shell git log --format='%h' -n 1)
 export ver=$(semver).$(gittip).$(arch)
