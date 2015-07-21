@@ -21,10 +21,11 @@ engrave:
 	echo "" >>ver.go
 
 deps:
-	godep get .
+	go get -u github.com/tools/godep
 	godep restore
 
 test: deps
+	go get -u github.com/golang/lint/golint
 	gofmt  -w=true -s=true -l=true ./..
 	golint ./...
 	go test -v
