@@ -95,7 +95,7 @@ GoSSHa
 	GoSSHa - very secure chat.
 	Build #1.24.1.b06789e.Linux.x86_64
 	Version: Build #b06789e on rhel.Linux.x86_64 on Sun Jun 28 01:10:39 MSK 2015
-	Commands avaible:
+	Commands available:
 	 \b - (B)an user (you need to have `root` permissions!)
 	 \e - Close current session
 	 \exit - Close current session
@@ -106,8 +106,8 @@ GoSSHa
 	 \passwd - Changes current user password
 	 \q - Close current session
 	 \quit - Close current session
-	 \r - (R)egisters new user (you need to have `root` permissions!)
-	 \rr - (R)egisters new (r)oot user (you need to have `root` permissions!)
+	 \r - (R)egister new user (you need to have `root` permissions!)
+	 \rr - (R)egister new (r)oot user (you need to have `root` permissions!)
 	 \w - List users, (W)ho are active on this server
 	 \x - E(X)ecutes custom user script from home directory
 	 all other input is treated as message, that you send to server
@@ -243,23 +243,16 @@ Can be enabled by `--debug=true` flag, or via `GOSSHA_DEBUG=true` environment va
 
 ```
 
-3) Установите зависимости
+3) Помолившись, попробуйте скомпилировать приложение.
 
 ```shell
 
-	$ cd $GOPATH/src/bitbucket.org/vodolaz095/gossha
-	$ godep get .
-	$ godep restore
+	$ make
 
 ```
 
-4) Помолившись, попробуйте скомпилировать приложение.
+и бинарный файл должен появится в `build/gossha`.
 
-```shell
-
-	$ go build app/gossha.go
-
-```
 
 Установка из скомпилированных бинарных файлов
 =================================
