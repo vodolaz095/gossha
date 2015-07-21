@@ -18,7 +18,7 @@
 		},
 		{
 			"ImportPath": "github.com/jinzhu/gorm",
-			"Rev": "5663048f137b961f9b1bac6a10227096aa36b0bf"
+			"Rev": "82d726bbfd8cefbe2dcdc7f7f0484551c0d40433"
 		},
 		{
 			"ImportPath": "github.com/kr/pretty",
@@ -69,7 +69,7 @@
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh",
-			"Rev": "f6a608df624ae17d57958a8a294c66da81730577"
+			"Rev": "7d5b0be716b9d6d4269afdaae10032bb296d3cdf"
 		},
 		{
 			"ImportPath": "gopkg.in/yaml.v2",
