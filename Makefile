@@ -5,8 +5,16 @@ export ver=$(semver).$(gittip).$(arch)
 export subver=$(shell hostname).$(arch) on $(space)$(shell date)
 export archiv=build/gossha.$(arch).$(semver)
 
+clear:
+	git checkout ver.go
+	rm -f build/gossha
+	rm -f build/*.zip
+	rm -f build/*.tar.gz
+	rm -f build/*.tar.bz2
+	rm -f build/*.txt
+	rm -f build/*.txt.sig
 
-all: build
+clean: clear
 
 engrave:
 	rm -f ver.go
@@ -62,11 +70,14 @@ sign:
 	@echo ""
 	@echo "*.sig files are signed with my GPG key of \`994C6375\`"
 
-clear:
-	git checkout ver.go
-	rm -f build/gossha
-	rm -f build/*.zip
-	rm -f build/*.tar.gz
-	rm -f build/*.tar.bz2
-	rm -f build/*.txt
-	rm -f build/*.txt.sig
+
+all: build
+
+install: build
+	su -c 'mv build/gossha /usr/bin/gossha'
+
+uninstall:
+	su -c 'rm /usr/bin/gossha -f'
+
+remove: uninstall
+
