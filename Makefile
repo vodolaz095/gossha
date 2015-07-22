@@ -5,6 +5,8 @@ export ver=$(semver).$(gittip).$(arch)
 export subver=$(shell hostname).$(arch) on $(space)$(shell date)
 export archiv=build/gossha.$(arch).$(semver)
 
+all: build
+
 clear:
 	git checkout ver.go
 	rm -f build/gossha
@@ -69,9 +71,6 @@ sign:
 	@echo ""
 	@echo ""
 	@echo "*.sig files are signed with my GPG key of \`994C6375\`"
-
-
-all: build
 
 install: build
 	su -c 'mv build/gossha /usr/bin/gossha'
