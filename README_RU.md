@@ -227,39 +227,52 @@ Can be enabled by `--debug=true` flag, or via `GOSSHA_DEBUG=true` environment va
 
 Компилирование из исходных кодов
 =================================
+Предполагается, что используется какой-либо из популярных дистрибутивов `Linux`
 
-1) Установите [godep](https://github.com/tools/godep)
+1) [Установите язык программирования Go](http://golang.org/doc/install) and it's [environment](http://golang.org/doc/code.html#GOPATH) properly. At least `1.4.2` version.
 
-```shell
+2) Verify you have [GNU Make](https://www.gnu.org/software/make/) at least of
+4.0 version.
 
-	$ go get github.com/tools/godep
-
-```
-2) Склонируйте коды из репозитория
-
-```shell
-
-	$ git clone ssh://git@bitbucket.org/vodolaz095/gossha.git
-
-```
-
-3) Установите зависимости
+3) Clone code from repository in appropriate place
 
 ```shell
 
-	$ cd $GOPATH/src/bitbucket.org/vodolaz095/gossha
-	$ godep get .
-	$ godep restore
+	$ cd $GOPATH/src/github.com
+	$ mkdir vodolaz095
+	$ cd vodolaz095
+	$ git clone ssh://git@github.org/vodolaz095/gossha.git
 
 ```
 
-4) Помолившись, попробуйте скомпилировать приложение.
+3) Try to build 
 
 ```shell
 
-	$ go build app/gossha.go
+	$ make
 
 ```
+The binary file will be created in `build/gossha`
+
+4) Try to install globaly (root password will be asked!) 
+
+```shell
+
+	$ make install
+
+```
+This step results in binary generated and placed in `/usr/bin/gossha`.
+Also you can uninstall binaries by (root password will be asked!)
+
+```shell
+
+	$ make uninstall
+
+```
+
+5) By default, when you run the application first time, the directory 
+with databases, configs and scripts will be created in `$HOME/.gossha/`
+
 
 Установка из скомпилированных бинарных файлов
 =================================

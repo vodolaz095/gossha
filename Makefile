@@ -1,9 +1,9 @@
 export semver=1.0.2
-export arch=$(shell uname).$(shell uname -m)
+export arch=$(shell uname)-$(shell uname -m)
 export gittip=$(shell git log --format='%h' -n 1)
 export ver=$(semver).$(gittip).$(arch)
-export subver=$(shell hostname).$(arch) on $(space)$(shell date)
-export archiv=build/gossha.$(arch).$(semver)
+export subver=$(shell hostname) on $(shell date)
+export archiv=build/gossha-$(arch)-v$(semver)
 
 
 all: build
@@ -21,6 +21,8 @@ engrave:
 	echo "" >>ver.go
 
 deps:
+	go get -u github.com/tools/godep
+	go get -u github.com/golang/lint/golint
 	godep get .
 	godep restore
 
@@ -30,13 +32,14 @@ test: deps
 	go test -v
 
 
-build: clear engrave deps test
+build: clean engrave deps test
 	go build -o "build/gossha" app/gossha.go
 
-pack: build
+dist: build
 	zip $(archiv).zip  build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/ -r
 	tar -czvf $(archiv).tar.gz  build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/
 	tar -cjvf $(archiv).tar.bz2 build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/
+
 
 sign:
 	rm build/*.txt -f
@@ -61,11 +64,21 @@ sign:
 	@echo ""
 	@echo "*.sig files are signed with my GPG key of \`994C6375\`"
 
-clear:
+clean:
 	git checkout ver.go
-	rm -f build/gossha
-	rm -f build/*.zip
-	rm -f build/*.tar.gz
-	rm -f build/*.tar.bz2
-	rm -f build/*.txt
-	rm -f build/*.txt.sig
+	rm -rf build/gossha
+	rm -rf build/*.zip
+	rm -rf build/*.tar.gz
+	rm -rf build/*.tar.bz2
+	rm -rf build/*.txt
+	rm -rf build/*.txt.sig
+
+
+check: test
+
+install: build
+	su -c 'cp -f build/gossha /usr/bin/'
+	
+uninstall:
+	su -c 'rm -rf /usr/bin/gossha'
+

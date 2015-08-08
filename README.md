@@ -212,39 +212,53 @@ Can be set via `--executeOnPrivateMessage=/home/myusername/.gossha/afterPrivateM
 
 Building from sources
 =================================
+I assume you have one of popular `Linux` distros, i don't care about other OSes.
 
-1) Install [godep](https://github.com/tools/godep)
+1) [Install Go language](http://golang.org/doc/install) and it's [environment](http://golang.org/doc/code.html#GOPATH) properly. At least `1.4.2` version.
 
-```shell
+2) Verify you have [GNU Make](https://www.gnu.org/software/make/) at least of
+4.0 version.
 
-	$ go get github.com/tools/godep
-
-```
-2) Clone code from repository
-
-```shell
-
-	$ git clone ssh://git@bitbucket.org/vodolaz095/gossha.git
-
-```
-
-3) Install dependencies via godep
+3) Clone code from repository in appropriate place
 
 ```shell
 
-	$ cd $GOPATH/src/bitbucket.org/vodolaz095/gossha
-	$ godep get .
-	$ godep restore
+	$ cd $GOPATH/src/github.com
+	$ mkdir vodolaz095
+	$ cd vodolaz095
+	$ git clone ssh://git@github.org/vodolaz095/gossha.git
 
 ```
 
-4) Try to Build
+3) Try to build 
 
 ```shell
 
-	$ go build app/gossha.go
+	$ make
 
 ```
+The binary file will be created in `build/gossha`
+
+4) Try to install globaly (root password will be asked!) 
+
+```shell
+
+	$ make install
+
+```
+This step results in binary generated and placed in `/usr/bin/gossha`.
+Also you can uninstall binaries by (root password will be asked!)
+
+```shell
+
+	$ make uninstall
+
+```
+
+5) By default, when you run the application first time, the directory 
+with databases, configs and scripts will be created in `$HOME/.gossha/`
+
+
 
 Installation via prebuild binaries
 =================================
