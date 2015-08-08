@@ -13,12 +13,12 @@
 		},
 		{
 			"ImportPath": "github.com/go-sql-driver/mysql",
-			"Comment": "v1.2-112-gfb72997",
-			"Rev": "fb7299726d2e68745a8805b14f2ff44b5c2cfa84"
+			"Comment": "v1.2-118-g3dd7008",
+			"Rev": "3dd7008ac1529aca1bcd8a9db75228a71ba23cac"
 		},
 		{
 			"ImportPath": "github.com/jinzhu/gorm",
-			"Rev": "82d726bbfd8cefbe2dcdc7f7f0484551c0d40433"
+			"Rev": "fd9e42655f382e76a4c755a676be827947f23b81"
 		},
 		{
 			"ImportPath": "github.com/kr/pretty",
@@ -36,12 +36,13 @@
 		},
 		{
 			"ImportPath": "github.com/magiconair/properties",
-			"Comment": "v1.5.4",
-			"Rev": "359442d561ca28acd0fe503aa9f075f505bc9ed0"
+			"Comment": "v1.5.5",
+			"Rev": "337395e44efb4affc8bf11971e22acbd4e27a32d"
 		},
 		{
 			"ImportPath": "github.com/mattn/go-sqlite3",
-			"Rev": "b4142c444a8941d0d92b0b7103a24df9cd815e42"
+			"Comment": "v1.0.0-2-g0fa27b5",
+			"Rev": "0fa27b5cb05c4239ff23cbec3af1d56af75c1854"
 		},
 		{
 			"ImportPath": "github.com/mitchellh/go-homedir",
@@ -49,11 +50,15 @@
 		},
 		{
 			"ImportPath": "github.com/mitchellh/mapstructure",
-			"Rev": "2caf8efc93669b6c43e0441cdc6aed17546c96f3"
+			"Rev": "281073eb9eb092240d33ef253c404f1cca550309"
+		},
+		{
+			"ImportPath": "github.com/qor/inflection",
+			"Rev": "45321e63b98c756df17369c027c1df89298e1288"
 		},
 		{
 			"ImportPath": "github.com/spf13/cast",
-			"Rev": "4d07383ffe94b5e5a6fa3af9211374a4507a0184"
+			"Rev": "ee815aaf958c707ad07547cd62150d973710f747"
 		},
 		{
 			"ImportPath": "github.com/spf13/jwalterweatherman",
@@ -61,15 +66,15 @@
 		},
 		{
 			"ImportPath": "github.com/spf13/pflag",
-			"Rev": "67cbc198fd11dab704b214c1e629a97af392c085"
+			"Rev": "41e9136667ee4f9ffd03da380e24629d7eccace4"
 		},
 		{
 			"ImportPath": "github.com/spf13/viper",
-			"Rev": "db7ff930a189b98d602179d9001d33345f42b8c7"
+			"Rev": "2abb1bebfde865b0bb6bb7ada5be63ec78527fa6"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh",
-			"Rev": "7d5b0be716b9d6d4269afdaae10032bb296d3cdf"
+			"Rev": "83f1503f771a82af8a31f358eb825e9efb5dae6c"
 		},
 		{
 			"ImportPath": "gopkg.in/yaml.v2",

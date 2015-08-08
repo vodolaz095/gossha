@@ -1,22 +1,12 @@
-export semver=1.0.3
-export arch=$(shell uname).$(shell uname -m)
+export semver=1.0.4
+export arch=$(shell uname)-$(shell uname -m)
 export gittip=$(shell git log --format='%h' -n 1)
 export ver=$(semver).$(gittip).$(arch)
-export subver=$(shell hostname).$(arch) on $(space)$(shell date)
-export archiv=build/gossha.$(arch).$(semver)
+export subver=$(shell hostname) on $(shell date)
+export archiv=build/gossha-$(arch)-v$(semver)
+
 
 all: build
-
-clear:
-	git checkout ver.go
-	rm -f build/gossha
-	rm -f build/*.zip
-	rm -f build/*.tar.gz
-	rm -f build/*.tar.bz2
-	rm -f build/*.txt
-	rm -f build/*.txt.sig
-
-clean: clear
 
 engrave:
 	rm -f ver.go
@@ -32,30 +22,31 @@ engrave:
 
 deps:
 	go get -u github.com/tools/godep
+	go get -u github.com/golang/lint/golint
 	godep restore
 
-test: deps
-	go get -u github.com/golang/lint/golint
+check: deps
 	gofmt  -w=true -s=true -l=true ./..
 	golint ./...
 	go test -v
 
 
-build: clear engrave deps test
+build: clean engrave deps check
 	go build -o "build/gossha" app/gossha.go
 
-pack: build
+dist: build
 	zip $(archiv).zip  build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/ -r
 	tar -czvf $(archiv).tar.gz  build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/
 	tar -cjvf $(archiv).tar.bz2 build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/
 
+
 sign:
 	rm build/*.txt -f
 	rm build/*.txt.sig -f
-	find build/ -name gossha.* -exec md5sum {} + > build/md5sum.txt
+	find build/ -name gossha-* -exec md5sum {} + > build/md5sum.txt
 	gpg2 -a --output build/md5sum.txt.sig  --detach-sig build/md5sum.txt
 	gpg2 --verify build/md5sum.txt.sig build/md5sum.txt
-	find build/ -name gossha.* -exec sha1sum {} + > build/sha1sum.txt
+	find build/ -name gossha-* -exec sha1sum {} + > build/sha1sum.txt
 	gpg2 -a --output build/sha1sum.txt.sig --detach-sig build/sha1sum.txt
 	gpg2 --verify build/sha1sum.txt.sig build/sha1sum.txt
 	@echo ""
@@ -72,11 +63,20 @@ sign:
 	@echo ""
 	@echo "*.sig files are signed with my GPG key of \`994C6375\`"
 
+clean:
+	git checkout ver.go
+	rm -rf build/gossha
+	rm -rf build/*.zip
+	rm -rf build/*.tar.gz
+	rm -rf build/*.tar.bz2
+	rm -rf build/*.txt
+	rm -rf build/*.txt.sig
+
+test: check
+
 install: build
-	su -c 'mv build/gossha /usr/bin/gossha'
-
+	su -c 'cp -f build/gossha /usr/bin/'
+	
 uninstall:
-	su -c 'rm /usr/bin/gossha -f'
-
-remove: uninstall
+	su -c 'rm -rf /usr/bin/gossha'
 

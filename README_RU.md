@@ -227,19 +227,20 @@ Can be enabled by `--debug=true` flag, or via `GOSSHA_DEBUG=true` environment va
 
 Компилирование из исходных кодов
 =================================
+Предполагается, что используется какой-либо из популярных дистрибутивов `Linux`
 
-1) Установите [godep](https://github.com/tools/godep)
+1) [Установите язык программирования Go](http://golang.org/doc/install) и его [среду исполнения](http://golang.org/doc/code.html#GOPATH). Версия языка программирования Go должна быть новее `1.4.2`.
 
-```shell
+2) Убедитесь, что на Вашем компьютере установлен [GNU Make](https://www.gnu.org/software/make/) как минимум 4.0 версии.
 
-	$ go get github.com/tools/godep
-
-```
-2) Склонируйте коды из репозитория
+3) Загрузите исходные коды программы из репозитория в соответствующую директорию в $GOPATH
 
 ```shell
 
-	$ git clone ssh://git@bitbucket.org/vodolaz095/gossha.git
+	$ cd $GOPATH/src/github.com
+	$ mkdir vodolaz095
+	$ cd vodolaz095
+	$ git clone ssh://git@github.org/vodolaz095/gossha.git
 
 ```
 
@@ -252,6 +253,26 @@ Can be enabled by `--debug=true` flag, or via `GOSSHA_DEBUG=true` environment va
 ```
 
 и бинарный файл должен появится в `build/gossha`.
+
+
+4) Чтобы установить программу глобально, запустите (будет запрошен пароль суперпользователя):
+
+```shell
+
+	$ make install
+
+```
+В результате в директории `/usr/bin/gossha` будет создан исполняемый файл программы.
+Также можно удалить программу из системы, воспользовавшись командой  (будет запрошен пароль суперпользователя):
+
+```shell
+
+	$ make uninstall
+
+```
+
+5) По умолчанию, после запуска программы директория с базой данных и конфигурационными файлами будет создана в 
+домашней директории пользователя в `$HOME/.gossha/`.
 
 
 Установка из скомпилированных бинарных файлов

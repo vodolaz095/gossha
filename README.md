@@ -14,7 +14,7 @@ Application has serious custom scripting and hacking potential.
 Use case - devops chat with possibility to run scripts from chat, without SSH access to server.
 
 
-Main advantages
+Main addvantages
 =================================
 
 1) [Secure SHell protocol](https://en.wikipedia.org/wiki/Secure_Shell) is used to make all communications safe and secure.
@@ -23,7 +23,7 @@ Main advantages
 
 3) Users can be authorized by passwords or private keys.
 
-4) We can start application listening on few addresses and ports on the same time. For example, listening on `192.168.1.2:2222` on local area network, and on `193.41.32.25:27015` for uplink connections.
+4) We can start application listening on few addresses and ports on the same time. For example, listeing on `192.168.1.2:2222` on local area network, and on `193.41.32.25:27015` for uplink connections.
 
 5) Users can execute scripts defined by admin on behalf of users running the GoSSHa server.
 
@@ -95,11 +95,11 @@ the `\k` command.
 	GoSSHa - very secure chat.
 	Build #1.24.1.b06789e.Linux.x86_64
 	Version: Build #b06789e on rhel.Linux.x86_64 on Sun Jun 28 01:10:39 MSK 2015
-	Commands available:
+	Commands avaible:
 	 \b - (B)an user (you need to have `root` permissions!)
 	 \e - Close current session
 	 \exit - Close current session
-	 \f - (F)orgot local available SSH key used for authorising your logins via this client
+	 \f - (F)orgot localy available SSH key used for authorising your logins via this client
 	 \h - (H)elp, show this screen
 	 \i - Print (I)nformation about yourself
 	 \k - Use locally available SSH (K)eys to authorise your logins on this server
@@ -214,31 +214,52 @@ Can be set via `--executeOnPrivateMessage=/home/myusername/.gossha/afterPrivateM
 
 Building from sources
 =================================
+I assume you have one of popular `Linux` distros, i don't care about other OSes.
 
-1) Install [godep](https://github.com/tools/godep)
+1) [Install Go language](http://golang.org/doc/install) and it's [environment](http://golang.org/doc/code.html#GOPATH) properly. At least `1.4.2` version.
+
+2) Verify you have [GNU Make](https://www.gnu.org/software/make/) at least of
+4.0 version.
+
+3) Clone code from repository in appropriate place
 
 ```shell
 
-	$ go get github.com/tools/godep
-
-```
-2) Clone code from repository
-
-```shell
-
-	$ git clone ssh://git@bitbucket.org/vodolaz095/gossha.git
+	$ cd $GOPATH/src/github.com
+	$ mkdir vodolaz095
+	$ cd vodolaz095
+	$ git clone ssh://git@github.org/vodolaz095/gossha.git
 
 ```
 
-3) Try to Build
+3) Try to build 
 
 ```shell
 
 	$ make
 
 ```
+The binary file will be created in `build/gossha`
 
-and binary file have to be created in `build/gossha`.
+4) Try to install globaly (root password will be asked!) 
+
+```shell
+
+	$ make install
+
+```
+This step results in binary generated and placed in `/usr/bin/gossha`.
+Also you can uninstall binaries by (root password will be asked!)
+
+```shell
+
+	$ make uninstall
+
+```
+
+5) By default, when you run the application first time, the directory 
+with databases, configs and scripts will be created in `$HOME/.gossha/`
+
 
 
 Installation via prebuild binaries
