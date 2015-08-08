@@ -229,10 +229,9 @@ Can be enabled by `--debug=true` flag, or via `GOSSHA_DEBUG=true` environment va
 =================================
 Предполагается, что используется какой-либо из популярных дистрибутивов `Linux`
 
-1) [Установите язык программирования Go](http://golang.org/doc/install) and it's [environment](http://golang.org/doc/code.html#GOPATH) properly. At least `1.4.2` version.
+1) [Установите язык программирования Go](http://golang.org/doc/install) и его [среду исполнения](http://golang.org/doc/code.html#GOPATH). Версия языка программирования Go должна быть новее `1.4.2`.
 
-2) Убедитесь, что на Вашем компьютере установлен [GNU Make](https://www.gnu.org/software/make/) как минимум
-4.0 версии.
+2) Убедитесь, что на Вашем компьютере установлен [GNU Make](https://www.gnu.org/software/make/) как минимум 4.0 версии.
 
 3) Загрузите исходные коды программы из репозитория в соответствующую директорию в $GOPATH
 
