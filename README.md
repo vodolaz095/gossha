@@ -104,8 +104,8 @@ the `\k` command.
 	 \passwd - Changes current user password
 	 \q - Close current session
 	 \quit - Close current session
-	 \r - (R)egisters new user (you need to have `root` permissions!)
-	 \rr - (R)egisters new (r)oot user (you need to have `root` permissions!)
+	 \r - (R)egister new user (you need to have `root` permissions!)
+	 \rr - (R)egister new (r)oot user (you need to have `root` permissions!)
 	 \w - List users, (W)ho are active on this server
 	 \x - E(X)ecutes custom user script from home directory
 	 all other input is treated as message, that you send to server

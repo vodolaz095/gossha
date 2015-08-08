@@ -42,10 +42,10 @@ func New() Handler {
 	h.addKnownCommand("w", "Who", "List users, (W)ho are active on this server")
 	h.addKnownCommand("i", "Info", "Print (I)nformation about yourself")
 	h.addKnownCommand("k", "ImportPublicKey", "Use locally available SSH (K)eys to authorise your logins on this server")
-	h.addKnownCommand("f", "ForgotPublicKey", "(F)orgot localy available SSH key used for authorising your logins via this client")
+	h.addKnownCommand("f", "ForgotPublicKey", "(F)orgot local available SSH key used for authorising your logins via this client")
 	h.addKnownCommand("b", "Ban", "(B)an user (you need to have `root` permissions!)")
-	h.addKnownCommand("r", "SignUpUser", "(R)egisters new user (you need to have `root` permissions!)")
-	h.addKnownCommand("rr", "SignUpRoot", "(R)egisters new (r)oot user (you need to have `root` permissions!)")
+	h.addKnownCommand("r", "SignUpUser", "(R)egister new user (you need to have `root` permissions!)")
+	h.addKnownCommand("rr", "SignUpRoot", "(R)egister new (r)oot user (you need to have `root` permissions!)")
 	h.addKnownCommand("x", "ExecCommand", "E(X)ecutes custom user script from home directory")
 	h.addKnownCommand("passwd", "ChangePassword", "Changes current user password")
 	return h
@@ -61,7 +61,7 @@ func (h *Handler) PrintHelpForUser(connection ssh.Channel, term *terminal.Termin
 	cmds = append(cmds, "GoSSHa - very secure chat.\n\r")
 	cmds = append(cmds, fmt.Sprintf("Build #%v \n\r", VERSION))
 	cmds = append(cmds, fmt.Sprintf("Version: %v \n\r", SUBVERSION))
-	cmds = append(cmds, fmt.Sprintf("Commands avaible:\n\r"))
+	cmds = append(cmds, fmt.Sprintf("Commands available:\n\r"))
 	var keys []string
 	for k, v := range h.KnownCommands {
 		keys = append(keys, fmt.Sprintf(" \\%v - %v\n\r", k, v.Description))

@@ -1,3 +1,6 @@
+# v 1.0.3
+Newer crypto and gorm libs
+
 # v 1.0.2
 Newer crypto libs
 

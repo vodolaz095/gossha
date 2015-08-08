@@ -1,4 +1,4 @@
-export semver=1.0.2
+export semver=1.0.3
 export arch=$(shell uname)-$(shell uname -m)
 export gittip=$(shell git log --format='%h' -n 1)
 export ver=$(semver).$(gittip).$(arch)
@@ -26,13 +26,13 @@ deps:
 	godep get .
 	godep restore
 
-test: deps
+check: deps
 	gofmt  -w=true -s=true -l=true ./..
 	golint ./...
 	go test -v
 
 
-build: clean engrave deps test
+build: clean engrave deps check
 	go build -o "build/gossha" app/gossha.go
 
 dist: build
@@ -73,8 +73,7 @@ clean:
 	rm -rf build/*.txt
 	rm -rf build/*.txt.sig
 
-
-check: test
+test: check
 
 install: build
 	su -c 'cp -f build/gossha /usr/bin/'
