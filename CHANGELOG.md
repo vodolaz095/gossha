@@ -1,3 +1,6 @@
+# v 1.0.4
+Newer crypto and gorm libs. More standart and automated `Makefile` behaviour. Readme updated.
+
 # v 1.0.3
 Newer crypto and gorm libs
 
