@@ -4,6 +4,8 @@ GoSSHa
 [![Build Status](https://travis-ci.org/vodolaz095/gossha.svg)](https://travis-ci.org/vodolaz095/gossha)
 [![GoDoc](https://godoc.org/github.com/vodolaz095/gossha?status.svg)](https://godoc.org/github.com/vodolaz095/gossha)
 
+[Руководство пользователя на Русском языке](https://github.com/vodolaz095/gossha/blob/master/README_RU.md)
+
 Cross-platform ssh-server based chat program, with data persisted into
 relational databases of MySQL, PostgreSQL or Sqlite3.
 Public channel (with persisted messages) and private message (not stored) are supported.
