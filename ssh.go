@@ -11,10 +11,10 @@ import (
 func StartSSHD(addr string) {
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
-		panic(fmt.Sprintf("Failed to listen on %v (%s)", addr, err.Error()))
+		panic(fmt.Sprintf("Failed to listen on %v port. Reason: (%s)", addr, err.Error()))
 	}
 
-	fmt.Printf("GoSSHa is listening on %v!\n", addr)
+	fmt.Printf("GoSSHa is listening on %v port!\n", addr)
 
 	for {
 		tcpConn, err := listener.Accept()

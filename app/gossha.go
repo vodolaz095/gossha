@@ -1,16 +1,17 @@
 package main
 
 import (
-	"github.com/vodolaz095/gossha"
 	"fmt"
+	"github.com/vodolaz095/gossha"
 	"net/http"
 	_ "net/http/pprof"
 )
 
 func main() {
+	fmt.Println(gossha.Greet())
+
 	cfg, args, err := gossha.InitConfig()
 	gossha.RuntimeConfig = &cfg
-	gossha.PrintHelpOnCli()
 	gossha.InitDatabase(cfg.Driver, cfg.ConnectionString)
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
@@ -24,6 +25,7 @@ func main() {
 	}
 
 	if len(args) == 0 {
+		fmt.Println("\nTry `gossha help` for help...\n")
 		if cfg.Debug {
 			go func() {
 				fmt.Println(http.ListenAndServe("localhost:3000", nil))
@@ -40,6 +42,6 @@ func main() {
 			gossha.StartSSHD(fmt.Sprintf("0.0.0.0:%v", gossha.RuntimeConfig.Port))
 		}
 	} else {
-		gossha.ProcessConsoleCommand(args)
+		gossha.ProcessConsoleCommand()
 	}
 }

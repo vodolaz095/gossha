@@ -12,8 +12,7 @@ import (
 
 //KnownCommand includes command known to Handler and it's short description
 type KnownCommand struct {
-	Command string
-	//	Command     func(ssh.Channel, *terminal.Terminal, ...string) error
+	Command     string
 	Description string
 }
 
@@ -58,7 +57,7 @@ func (h *Handler) addKnownCommand(key, commandName, help string) {
 // PrintHelpForUser outputs help for current user
 func (h *Handler) PrintHelpForUser(connection ssh.Channel, term *terminal.Terminal, command []string) error {
 	var cmds []string
-	cmds = append(cmds, "GoSSHa - very secure chat.\n\r")
+	cmds = append(cmds, "GoSSHa - SSH powered chat. See https://github.com/vodolaz095/gossha for details...\n\r")
 	cmds = append(cmds, fmt.Sprintf("Build #%v \n\r", VERSION))
 	cmds = append(cmds, fmt.Sprintf("Version: %v \n\r", SUBVERSION))
 	cmds = append(cmds, fmt.Sprintf("Commands available:\n\r"))
