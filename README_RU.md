@@ -231,10 +231,10 @@ Can be enabled by `--debug=true` flag, or via `GOSSHA_DEBUG=true` environment va
 
 1) [Установите язык программирования Go](http://golang.org/doc/install) and it's [environment](http://golang.org/doc/code.html#GOPATH) properly. At least `1.4.2` version.
 
-2) Verify you have [GNU Make](https://www.gnu.org/software/make/) at least of
-4.0 version.
+2) Убедитесь, что на Вашем компьютере установлен [GNU Make](https://www.gnu.org/software/make/) как минимум
+4.0 версии.
 
-3) Clone code from repository in appropriate place
+3) Загрузите исходные коды программы из репозитория в соответствующую директорию в $GOPATH
 
 ```shell
 
@@ -245,32 +245,6 @@ Can be enabled by `--debug=true` flag, or via `GOSSHA_DEBUG=true` environment va
 
 ```
 
-3) Try to build 
-
-```shell
-
-	$ make
-
-```
-The binary file will be created in `build/gossha`
-
-<<<<<<< HEAD
-4) Try to install globaly (root password will be asked!) 
-
-```shell
-
-	$ make install
-
-```
-This step results in binary generated and placed in `/usr/bin/gossha`.
-Also you can uninstall binaries by (root password will be asked!)
-
-```shell
-
-	$ make uninstall
-
-```
-=======
 3) Помолившись, попробуйте скомпилировать приложение.
 
 ```shell
@@ -281,10 +255,25 @@ Also you can uninstall binaries by (root password will be asked!)
 
 и бинарный файл должен появится в `build/gossha`.
 
->>>>>>> e6ec428702cc1cface017eab9d8ecba70f8fd052
 
-5) By default, when you run the application first time, the directory 
-with databases, configs and scripts will be created in `$HOME/.gossha/`
+4) Чтобы установить программу глобально, запустите (будет запрошен пароль суперпользователя):
+
+```shell
+
+	$ make install
+
+```
+В результате в директории `/usr/bin/gossha` будет создан исполняемый файл программы.
+Также можно удалить программу из системы, воспользовавшись командой  (будет запрошен пароль суперпользователя):
+
+```shell
+
+	$ make uninstall
+
+```
+
+5) По умолчанию, после запуска программы директория с базой данных и конфигурационными файлами будет создана в 
+домашней директории пользователя в `$HOME/.gossha/`.
 
 
 Установка из скомпилированных бинарных файлов
