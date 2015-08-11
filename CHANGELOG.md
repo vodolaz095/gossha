@@ -1,5 +1,6 @@
 # v 1.1.0
-Tons of fixes, console interface is refactored. Console commands of `gossha list`,`gossha log`,`gossha dumpcfg` are added.
+Tons of smallfixes, console interface is refactored. Console commands of `gossha list`,`gossha log`,`gossha dumpcfg` are added.
+More verbose error reporter with link to bug-tracker.
 
 # v 1.0.4
 Newer crypto and gorm libs. More standart and automated `Makefile` behaviour. Readme updated.

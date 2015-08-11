@@ -33,11 +33,12 @@ check: deps
 
 build: clean engrave deps check
 	go build -o "build/gossha" app/gossha.go
+	git checkout ver.go
 
 dist: build
-	zip $(archiv).zip  build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/ -r
-	tar -czvf $(archiv).tar.gz  build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/
-	tar -cjvf $(archiv).tar.bz2 build/gossha README.md README_RU.md CHANGELOG.md homedir/ systemd/
+	zip $(archiv).zip  build/gossha README.md README_RU.md CHANGELOG.md homedir/ contrib/ -r
+	tar -czvf $(archiv).tar.gz  build/gossha README.md README_RU.md CHANGELOG.md homedir/ contrib/
+	tar -cjvf $(archiv).tar.bz2 build/gossha README.md README_RU.md CHANGELOG.md homedir/ contrib/
 
 
 sign:
