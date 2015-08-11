@@ -40,6 +40,7 @@ func ProcessConsoleCommand(cfg Config) {
 			fmt.Println(Greet())
 			fmt.Println("\nTry `gossha help` for help...\n")
 			if cfg.Debug {
+				fmt.Println("Debug server is listening on http://localhost:3000/debug/pprof!")
 				go func() {
 					fmt.Println(http.ListenAndServe("localhost:3000", nil))
 				}()
