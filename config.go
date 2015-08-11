@@ -72,7 +72,7 @@ func GetPublicKeyPath() string {
 // places - `/etc/gossha/gossha.json` or `$HOME/.gossha/gossha.json`, or by populating values
 // from environment (with prefix of GOSSHA_). If the config file is not in place,
 //the directory and file are created
-func InitConfig() (Config, []string, error) {
+func InitConfig() (Config, error) {
 	viper.SetConfigName("gossha")
 
 	viper.SetEnvPrefix("gossha")
@@ -137,35 +137,36 @@ func InitConfig() (Config, []string, error) {
 			hmdr := GetHomeDir()
 			err := os.MkdirAll(hmdr, 0700)
 			if err != nil {
-				return config, flag.Args(), err
+				return config, err
 			}
 
 			configFileName := fmt.Sprintf("%v%vgossha.json", config.Homedir, string(os.PathSeparator))
 			fmt.Printf("Creating configuration file at %v...\n\n", configFileName)
 			file, err := os.Create(configFileName)
 			if err != nil {
-				return config, flag.Args(), err
+				return config, err
 			}
 
-			configData, err := config.dump()
+			configData, err := config.Dump()
 			if err != nil {
-				return config, flag.Args(), err
+				return config, err
 			}
 
 			defer file.Close()
 			_, err = file.Write([]byte(configData))
 			if err != nil {
-				return config, flag.Args(), err
+				return config, err
 			}
-			return config, flag.Args(), nil
+			return config, nil
 		}
-		return config, flag.Args(), err
+		return config, err
 
 	}
-	return config, flag.Args(), nil
+	return config, nil
 }
 
-func (c *Config) dump() (string, error) {
+// Dump returns config as JSON object
+func (c *Config) Dump() (string, error) {
 	data, err := json.MarshalIndent(c, "", "  ")
 	return string(data), err
 }

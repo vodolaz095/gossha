@@ -204,7 +204,10 @@ func (h *Handler) GetMessages(limit int) ([]Notification, error) {
 	var ret []Notification
 	var messages []Message
 	var l int64
-	DB.Table("message").Preload("User").Where("message.id > ?", h.LastShownMessageID).Limit(limit).Order("message.id asc").Find(&messages)
+	err := DB.Table("message").Preload("User").Where("message.id > ?", h.LastShownMessageID).Limit(limit).Order("message.id asc").Find(&messages).Error
+	if err != nil {
+		return ret, err
+	}
 	for _, m := range messages {
 		ret = append(ret, Notification{User: m.User, Message: m, IsSystem: false, IsChat: true})
 	}
@@ -212,5 +215,5 @@ func (h *Handler) GetMessages(limit int) ([]Notification, error) {
 	if len(messages) > 0 {
 		h.LastShownMessageID = l
 	}
-	return ret, nil
+	return ret, err
 }

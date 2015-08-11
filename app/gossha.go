@@ -6,9 +6,7 @@ import (
 )
 
 func main() {
-	//	fmt.Println(gossha.Greet())
-
-	cfg, _, err := gossha.InitConfig()
+	cfg, err := gossha.InitConfig()
 	gossha.RuntimeConfig = &cfg
 	gossha.InitDatabase(cfg.Driver, cfg.ConnectionString)
 	if err != nil {

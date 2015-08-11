@@ -8,6 +8,7 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -18,7 +19,7 @@ func Greet() string {
 	var ggg []string
 	ggg = append(ggg, "")
 	ggg = append(ggg, string(gg))
-	ggg = append(ggg, "GoSSHa is a cross-platform ssh-server based chat program, with data persisted into relational databases of MySQL, PostgreSQL or Sqlite3. Public channel (with persisted messages) and private message (not stored) are supported. Application has serious custom scripting and hacking potential.")
+	//	ggg = append(ggg, "GoSSHa is a cross-platform ssh-server based chat program, with data persisted into relational databases of MySQL, PostgreSQL or Sqlite3. Public channel (with persisted messages) and private message (not stored) are supported. Application has serious custom scripting and hacking potential.")
 	ggg = append(ggg, fmt.Sprintf("Build: %v", VERSION))
 	ggg = append(ggg, fmt.Sprintf("Version: %v", SUBVERSION))
 	ggg = append(ggg, "Homepage: https://github.com/vodolaz095/gossha")
@@ -29,13 +30,12 @@ func Greet() string {
 	return strings.Join(ggg, "\r\n")
 }
 
-//ProcessConsoleCommand is a dispatcher for processing console commands,
-//set by arguments used to start application
+//ProcessConsoleCommand is a dispatcher for processing console commands and main entry point for application
 func ProcessConsoleCommand(cfg Config) {
 	var rootCmd = &cobra.Command{
 		Use:   "gossha",
-		Short: "",
-		Long:  "",
+		Short: "GoSSHa is a cross-platform ssh-server based chat program",
+		Long:  "GoSSHa is a cross-platform ssh-server based chat program, with data persisted into relational databases of MySQL, PostgreSQL or Sqlite3. Public channel (with persisted messages) and private message (not stored) are supported. Application has serious custom scripting and hacking potential.",
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println(Greet())
 			fmt.Println("\nTry `gossha help` for help...\n")
@@ -62,6 +62,7 @@ func ProcessConsoleCommand(cfg Config) {
 		Long:  "Outputs program version and exits",
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println(Greet())
+			os.Exit(0)
 		},
 	}
 	var passwdCmd = &cobra.Command{
@@ -129,6 +130,95 @@ func ProcessConsoleCommand(cfg Config) {
 			}
 		},
 	}
-	rootCmd.AddCommand(versionCmd, passwdCmd, makeRootUserCmd, banCmd)
+	var dumpConfig = &cobra.Command{
+		Use:   "dump",
+		Short: "Outputs the configuration as JSON object",
+		Long:  "Outputs the configuration as JSON object. Save this config in `$HOME/.gossha/gossha.json` or `/etc/gossha/gossha.json`",
+		Run: func(cmd *cobra.Command, args []string) {
+			json, err := cfg.Dump()
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println(json)
+		},
+	}
+
+	var listUsers = &cobra.Command{
+		Use:   "list",
+		Short: "List users",
+		Long:  "List users",
+		Run: func(cmd *cobra.Command, args []string) {
+			var users []User
+			k := 0
+			err := DB.Table("user").Order("user.id asc").Find(&users).Error
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println("Users in database:")
+			for _, u := range users {
+				k++
+				if u.Root {
+					fmt.Printf("%v) %v (root!) - online on %v \n", k, u.Name, u.LastSeenOnline.Format("15:04:05"))
+				} else {
+					fmt.Printf("%v) %v - online on %v \n", k, u.Name, u.LastSeenOnline.Format("15:04:05"))
+				}
+
+			}
+		},
+	}
+
+	var listMessages = &cobra.Command{
+		Use:   "log [limit]",
+		Short: "Show last messages, default limit is 10",
+		Long:  "Show last messages, default limit is 10",
+		Run: func(cmd *cobra.Command, args []string) {
+			var ret []Notification
+			var messages []Message
+			var limit int
+			if len(args) > 0 {
+				l, _ := strconv.ParseInt(args[0], 10, 8)
+				if l > 0 {
+					limit = int(l)
+				} else {
+					limit = 10
+				}
+			} else {
+				limit = 10
+			}
+			err := DB.Table("message").Preload("User").Limit(limit).Order("message.id asc").Find(&messages).Error
+			if err != nil {
+				panic(err)
+			}
+			for _, m := range messages {
+				ret = append(ret, Notification{User: m.User, Message: m, IsSystem: false, IsChat: true})
+			}
+			for _, n := range ret {
+				var u = n.User
+				var m = n.Message
+				var online string
+				if u.IsOnline() {
+					online = "*"
+				} else {
+					online = "x"
+				}
+				fmt.Printf("[%v@%v(%v) %v]{%v}:%v\r\n", u.Name, m.Hostname, m.IP, online, m.CreatedAt.Format("15:04:05"), m.Message)
+			}
+		},
+	}
+
+	//Note! - this flags are actually used in `config.go#InitConfig`.
+	//They are copied here to make application more user friendly!
+
+	rootCmd.PersistentFlags().Uint("port", 27015, "set the port to listen for connections")
+	rootCmd.PersistentFlags().Bool("debug", false, "start pprof debugging on port 3000")
+	rootCmd.PersistentFlags().String("driver", "sqlite3", "set the database driver to use, possible values are `sqlite3`,`mysql`,`postgres`")
+	rootCmd.PersistentFlags().String("connectionString", GetDatabasePath(), MakeDSNHelp())
+	rootCmd.PersistentFlags().String("sshPublicKeyPath", GetPublicKeyPath(), "location of public ssh key to be used with server, usually the $HOME/.ssh/id_rsa.pub")
+	rootCmd.PersistentFlags().String("sshPrivateKeyPath", GetPrivateKeyPath(), "location of private ssh key to be used with server, usually the $HOME/.ssh/id_rsa")
+	rootCmd.PersistentFlags().String("homedir", GetHomeDir(), "The home directory of module, usually $HOME/.gossha")
+	rootCmd.PersistentFlags().String("executeOnMessage", "", "Script to execute on each message")
+	rootCmd.PersistentFlags().String("executeOnPrivateMessage", "", "Script to execute on each private message")
+
+	rootCmd.AddCommand(versionCmd, passwdCmd, makeRootUserCmd, banCmd, dumpConfig, listUsers, listMessages)
 	rootCmd.Execute()
 }
