@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"net/http"
-	_ "net/http/pprof"
+	_ "net/http/pprof" //so we can have debugging on localhost:3000 - See http://godoc.org/net/http/pprof
 	"os"
 	"strconv"
 	"strings"
