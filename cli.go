@@ -211,7 +211,7 @@ func ProcessConsoleCommand(cfg Config) {
 	//They are copied here to make application more user friendly!
 
 	rootCmd.PersistentFlags().Uint("port", 27015, "set the port to listen for connections")
-	rootCmd.PersistentFlags().Bool("debug", false, "start pprof debugging on port 3000")
+	rootCmd.PersistentFlags().Bool("debug", false, "start pprof debugging on http://localhost:3000/debug/pprof/. See `http://godoc.org/net/http/pprof`")
 	rootCmd.PersistentFlags().String("driver", "sqlite3", "set the database driver to use, possible values are `sqlite3`,`mysql`,`postgres`")
 	rootCmd.PersistentFlags().String("connectionString", GetDatabasePath(), MakeDSNHelp())
 	rootCmd.PersistentFlags().String("sshPublicKeyPath", GetPublicKeyPath(), "location of public ssh key to be used with server, usually the $HOME/.ssh/id_rsa.pub")
