@@ -131,7 +131,7 @@ func ProcessConsoleCommand(cfg Config) {
 		},
 	}
 	var dumpConfig = &cobra.Command{
-		Use:   "dump",
+		Use:   "dumpcfg",
 		Short: "Outputs the configuration as JSON object",
 		Long:  "Outputs the configuration as JSON object. Save this config in `$HOME/.gossha/gossha.json` or `/etc/gossha/gossha.json`",
 		Run: func(cmd *cobra.Command, args []string) {

@@ -1,4 +1,4 @@
-export semver=1.0.5
+export semver=1.1.0
 export arch=$(shell uname)-$(shell uname -m)
 export gittip=$(shell git log --format='%h' -n 1)
 export ver=$(semver).$(gittip).$(arch)
@@ -76,7 +76,7 @@ test: check
 
 install: build
 	su -c 'cp -f build/gossha /usr/bin/'
-	
+
 uninstall:
 	su -c 'rm -rf /usr/bin/gossha'
 

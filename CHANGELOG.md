@@ -1,3 +1,6 @@
+# v 1.1.0
+Tons of fixes, console interface is refactored. Console commands of `gossha list`,`gossha log`,`gossha dumpcfg` are added.
+
 # v 1.0.4
 Newer crypto and gorm libs. More standart and automated `Makefile` behaviour. Readme updated.
 
@@ -8,7 +11,7 @@ Newer crypto and gorm libs
 Newer crypto libs
 
 # v 1.0.1
-Code style, fixes in continious integration scripts. 
+Code style, fixes in continious integration scripts.
 Proper build environment for Raspberry Pi v1.
 Removed some debug comments
 
