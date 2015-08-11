@@ -74,10 +74,13 @@ func GetPublicKeyPath() string {
 //the directory and file are created
 func InitConfig() (Config, []string, error) {
 	viper.SetConfigName("gossha")
+
+	viper.SetEnvPrefix("gossha")
+
 	viper.AddConfigPath("/etc/gossha")
 	viper.AddConfigPath("$HOME/.gossha")
 	viper.SetConfigType("json") //todo - maybe not needed
-	viper.SetEnvPrefix("gossha")
+
 	viper.AutomaticEnv()
 	err := viper.ReadInConfig()
 	config := Config{}
