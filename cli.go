@@ -151,7 +151,7 @@ func ProcessConsoleCommand(cfg Config) {
 		Run: func(cmd *cobra.Command, args []string) {
 			var users []User
 			k := 0
-			err := DB.Table("user").Order("user.id asc").Find(&users).Error
+			err := DB.Table("user").Order("user.name ASC").Find(&users).Error
 			if err != nil {
 				panic(err)
 			}
@@ -159,11 +159,10 @@ func ProcessConsoleCommand(cfg Config) {
 			for _, u := range users {
 				k++
 				if u.Root {
-					fmt.Printf("%v) %v (root!) - online on %v \n", k, u.Name, u.LastSeenOnline.Format("15:04:05"))
+					fmt.Printf("%v) %v (root!) - online on %v \n", k, u.Name, u.LastSeenOnline.Format("2006-1-2 15:04:05"))
 				} else {
-					fmt.Printf("%v) %v - online on %v \n", k, u.Name, u.LastSeenOnline.Format("15:04:05"))
+					fmt.Printf("%v) %v - online on %v \n", k, u.Name, u.LastSeenOnline.Format("2006-1-2 15:04:05"))
 				}
-
 			}
 		},
 	}
@@ -186,7 +185,7 @@ func ProcessConsoleCommand(cfg Config) {
 			} else {
 				limit = 10
 			}
-			err := DB.Table("message").Preload("User").Limit(limit).Order("message.id asc").Find(&messages).Error
+			err := DB.Table("message").Preload("User").Limit(limit).Order("message.id desc").Find(&messages).Error
 			if err != nil {
 				panic(err)
 			}
@@ -202,7 +201,7 @@ func ProcessConsoleCommand(cfg Config) {
 				} else {
 					online = "x"
 				}
-				fmt.Printf("[%v@%v(%v) %v]{%v}:%v\r\n", u.Name, m.Hostname, m.IP, online, m.CreatedAt.Format("15:04:05"), m.Message)
+				fmt.Printf("[%v@%v(%v) %v]{%v}:%v\r\n", u.Name, m.Hostname, m.IP, online, m.CreatedAt.Format("2006-1-2 15:04:05"), m.Message)
 			}
 		},
 	}

@@ -13,10 +13,10 @@ import (
 
 // PrintPrompt makes promt for current user
 func (h *Handler) PrintPrompt() string {
-	return fmt.Sprintf("[%v@%v(%v) %v]{%v}:", h.CurrentUser.Name, h.Hostname, h.IP, "*", time.Now().Format("15:04:05"))
+	return fmt.Sprintf("[%v@%v(%v) %v]{%v}:", h.CurrentUser.Name, h.Hostname, h.IP, "*", time.Now().Format("2006-1-2 15:04:05"))
 }
 
-// PrintMessage prints message in format of [username@hostname(192.168.1.2) *]{15:04:05}:Hello!
+// PrintMessage prints message in format of [username@hostname(192.168.1.2) *]{2006-1-2 15:04:05}:Hello!
 func (h *Handler) PrintMessage(m *Message, u *User) string {
 	var online string
 	if u.IsOnline() {
@@ -24,7 +24,7 @@ func (h *Handler) PrintMessage(m *Message, u *User) string {
 	} else {
 		online = "x"
 	}
-	return fmt.Sprintf("[%v@%v(%v) %v]{%v}:%v\r\n", u.Name, m.Hostname, m.IP, online, m.CreatedAt.Format("15:04:05"), m.Message)
+	return fmt.Sprintf("[%v@%v(%v) %v]{%v}:%v\r\n", u.Name, m.Hostname, m.IP, online, m.CreatedAt.Format("2006-1-2 15:04:05"), m.Message)
 }
 
 // PrintNotification pretty prints the Notification recieved by Nerve into terminal given
