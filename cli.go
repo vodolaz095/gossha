@@ -71,8 +71,8 @@ func ProcessConsoleCommand(cfg Config) {
 		Short: "Creates user or set new password to existent one",
 		Long:  "Creates user or set new password to existent one",
 		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) == 2 {
-				name := args[1]
+			if len(args) == 1 {
+				name := args[0]
 				password, err := gopass.GetPass("Enter password:")
 				if err != nil {
 					panic(err)
@@ -94,8 +94,8 @@ func ProcessConsoleCommand(cfg Config) {
 		Short: "Creates root user or set new password to existent one",
 		Long:  "Creates root user or set new password to existent one",
 		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) == 2 {
-				name := args[1]
+			if len(args) == 1 {
+				name := args[0]
 				password, err := gopass.GetPass("Enter password:")
 				if err != nil {
 					panic(err)
@@ -117,8 +117,8 @@ func ProcessConsoleCommand(cfg Config) {
 		Short: "Delete user and all his/her messages",
 		Long:  "Delete user and all his/her messages",
 		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) == 2 {
-				name := args[1]
+			if len(args) == 1 {
+				name := args[0]
 				err := BanUser(name)
 				if err != nil {
 					panic(err)
@@ -176,7 +176,7 @@ func ProcessConsoleCommand(cfg Config) {
 			var ret []Notification
 			var messages []Message
 			var limit int
-			if len(args) > 0 {
+			if len(args) == 1 {
 				l, _ := strconv.ParseInt(args[0], 10, 8)
 				if l > 0 {
 					limit = int(l)
