@@ -2,7 +2,7 @@ export semver=1.1.0
 export arch=$(shell uname)-$(shell uname -m)
 export gittip=$(shell git log --format='%h' -n 1)
 export ver=$(semver).$(gittip).$(arch)
-export subver=$(shell hostname) on $(shell date)
+export subver=Gloomy Sunday made via $(shell hostname) on $(shell date)
 export archiv=build/gossha-$(arch)-v$(semver)
 
 
