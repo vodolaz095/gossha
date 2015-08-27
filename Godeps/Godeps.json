@@ -12,6 +12,11 @@
 			"Rev": "056c9bc7be7190eaa7715723883caffa5f8fa3e4"
 		},
 		{
+			"ImportPath": "github.com/cpuguy83/go-md2man/md2man",
+			"Comment": "v1.0.3-2-g71acacd",
+			"Rev": "71acacd42f85e5e82f70a55327789582a5200a90"
+		},
+		{
 			"ImportPath": "github.com/go-sql-driver/mysql",
 			"Comment": "v1.2-118-g3dd7008",
 			"Rev": "3dd7008ac1529aca1bcd8a9db75228a71ba23cac"
@@ -45,7 +50,7 @@
 		},
 		{
 			"ImportPath": "github.com/mattn/go-sqlite3",
-			"Comment": "v1.0.0-2-g0fa27b5",
+			"Comment": "v1.0.0-9-g897b880",
 			"Rev": "897b8800a7d1a93518b87c00e5d1c5d7476f3701"
 		},
 		{
@@ -61,6 +66,15 @@
 			"Rev": "45321e63b98c756df17369c027c1df89298e1288"
 		},
 		{
+			"ImportPath": "github.com/russross/blackfriday",
+			"Comment": "v1.2-80-g8cec3a8",
+			"Rev": "8cec3a854e68dba10faabbe31c089abf4a3e57a6"
+		},
+		{
+			"ImportPath": "github.com/shurcooL/sanitized_anchor_name",
+			"Rev": "244f5ac324cb97e1987ef901a0081a77bfd8e845"
+		},
+		{
 			"ImportPath": "github.com/spf13/cast",
 			"Rev": "ee815aaf958c707ad07547cd62150d973710f747"
 		},
@@ -74,7 +88,7 @@
 		},
 		{
 			"ImportPath": "github.com/spf13/pflag",
-			"Rev": "8e7dc108ab3a1ab6ce6d922bbaff5657b88e8e49s"
+			"Rev": "8e7dc108ab3a1ab6ce6d922bbaff5657b88e8e49"
 		},
 		{
 			"ImportPath": "github.com/spf13/viper",

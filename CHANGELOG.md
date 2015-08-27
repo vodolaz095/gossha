@@ -1,3 +1,6 @@
+# v 1.1.1
+More recent dependencies
+
 # v 1.1.0
 Tons of smallfixes, console interface is refactored. Console commands of `gossha list`,`gossha log`,`gossha dumpcfg` are added.
 More verbose error reporter with link to bug-tracker.
