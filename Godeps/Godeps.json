@@ -46,11 +46,11 @@
 		{
 			"ImportPath": "github.com/mattn/go-sqlite3",
 			"Comment": "v1.0.0-2-g0fa27b5",
-			"Rev": "0fa27b5cb05c4239ff23cbec3af1d56af75c1854"
+			"Rev": "897b8800a7d1a93518b87c00e5d1c5d7476f3701"
 		},
 		{
 			"ImportPath": "github.com/mitchellh/go-homedir",
-			"Rev": "1f6da4a72e57d4e7edd4a7295a585e0a3999a2d4"
+			"Rev": "56f508a88415ab57e596a176f0789ede8f790903"
 		},
 		{
 			"ImportPath": "github.com/mitchellh/mapstructure",
@@ -66,7 +66,7 @@
 		},
 		{
 			"ImportPath": "github.com/spf13/cobra",
-			"Rev": "385fc87e4343efec233811d3d933509e8975d11a"
+			"Rev": "e4993076d845b7127c760e2e57a4984c166c6c05"
 		},
 		{
 			"ImportPath": "github.com/spf13/jwalterweatherman",
@@ -74,7 +74,7 @@
 		},
 		{
 			"ImportPath": "github.com/spf13/pflag",
-			"Rev": "41e9136667ee4f9ffd03da380e24629d7eccace4"
+			"Rev": "8e7dc108ab3a1ab6ce6d922bbaff5657b88e8e49s"
 		},
 		{
 			"ImportPath": "github.com/spf13/viper",
