@@ -1,3 +1,6 @@
+# v 1.1.2
+More recend dependencies. Build with Go 1.5.1.
+
 # v 1.1.1
 More recent dependencies
 
