@@ -38,7 +38,9 @@ func ProcessConsoleCommand(cfg Config) {
 		Long:  "GoSSHa is a cross-platform ssh-server based chat program, with data persisted into relational databases of MySQL, PostgreSQL or Sqlite3. Public channel (with persisted messages) and private message (not stored) are supported. Application has serious custom scripting and hacking potential.",
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println(Greet())
-			fmt.Println("\nTry `gossha help` for help...\n")
+			fmt.Println()
+			fmt.Println("Try `gossha help` for help...")
+			fmt.Println()
 			if cfg.Debug {
 				fmt.Println("Debug server is listening on http://localhost:3000/debug/pprof!")
 				go func() {
@@ -47,9 +49,7 @@ func ProcessConsoleCommand(cfg Config) {
 			}
 			if len(RuntimeConfig.BindTo) > 0 {
 				for _, v := range RuntimeConfig.BindTo[:(len(RuntimeConfig.BindTo) - 1)] {
-					go func() {
-						StartSSHD(v)
-					}()
+					go StartSSHD(v)
 				}
 				StartSSHD(RuntimeConfig.BindTo[len(RuntimeConfig.BindTo)-1])
 			} else {

@@ -28,6 +28,7 @@ deps:
 check: deps
 	gofmt  -w=true -s=true -l=true ./..
 	golint ./...
+	go vet
 	go test -v
 
 

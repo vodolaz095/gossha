@@ -24,13 +24,14 @@ func StartSSHD(addr string) {
 		}
 		handler := New()
 		config := handler.MakeSSHConfig()
-		sshConn, chans, reqs, err := ssh.NewServerConn(tcpConn, config)
+		_, chans, reqs, err := ssh.NewServerConn(tcpConn, config)
+		//		sshConn, chans, reqs, err := ssh.NewServerConn(tcpConn, config)
 		if err != nil {
 			fmt.Printf("Failed to handshake (%s)\n", err.Error())
 			continue
 		}
 
-		fmt.Sprintf("New SSH connection from %s (%s)", sshConn.RemoteAddr(), sshConn.ClientVersion())
+		//		fmt.Sprintf("New SSH connection from %s (%s)", sshConn.RemoteAddr(), sshConn.ClientVersion())
 		go ssh.DiscardRequests(reqs)
 		go handleChannels(chans, &handler)
 	}
