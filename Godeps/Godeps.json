@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/vodolaz095/gossha",
-	"GoVersion": "go1.4.2",
+	"GoVersion": "go1.5.1",
 	"Deps": [
 		{
 			"ImportPath": "code.google.com/p/gopass",
@@ -18,8 +18,8 @@
 		},
 		{
 			"ImportPath": "github.com/go-sql-driver/mysql",
-			"Comment": "v1.2-118-g3dd7008",
-			"Rev": "3dd7008ac1529aca1bcd8a9db75228a71ba23cac"
+			"Comment": "v1.2-119-g527bcd5",
+			"Rev": "527bcd55aab2e53314f1a150922560174b493034"
 		},
 		{
 			"ImportPath": "github.com/inconshreveable/mousetrap",
@@ -27,7 +27,7 @@
 		},
 		{
 			"ImportPath": "github.com/jinzhu/gorm",
-			"Rev": "fd9e42655f382e76a4c755a676be827947f23b81"
+			"Rev": "ede940e82d978b7f414dc05f7de1e2d33702e6c0"
 		},
 		{
 			"ImportPath": "github.com/kr/pretty",
@@ -50,8 +50,8 @@
 		},
 		{
 			"ImportPath": "github.com/mattn/go-sqlite3",
-			"Comment": "v1.0.0-9-g897b880",
-			"Rev": "897b8800a7d1a93518b87c00e5d1c5d7476f3701"
+			"Comment": "v1.1.0-11-gb808f01",
+			"Rev": "b808f01f660667b1510acf216aa2b9fe7f555ddb"
 		},
 		{
 			"ImportPath": "github.com/mitchellh/go-homedir",
@@ -80,7 +80,7 @@
 		},
 		{
 			"ImportPath": "github.com/spf13/cobra",
-			"Rev": "e4993076d845b7127c760e2e57a4984c166c6c05"
+			"Rev": "d732ab3a34e6e9e6b5bdac80707c2b6bad852936"
 		},
 		{
 			"ImportPath": "github.com/spf13/jwalterweatherman",
@@ -88,7 +88,7 @@
 		},
 		{
 			"ImportPath": "github.com/spf13/pflag",
-			"Rev": "8e7dc108ab3a1ab6ce6d922bbaff5657b88e8e49"
+			"Rev": "b084184666e02084b8ccb9b704bf0d79c466eb1d"
 		},
 		{
 			"ImportPath": "github.com/spf13/viper",
