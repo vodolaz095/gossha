@@ -1,9 +1,9 @@
 package gossha
 
 import (
-	"code.google.com/p/gopass"
 	"encoding/base64"
 	"fmt"
+	"github.com/howeyc/gopass"
 	"github.com/spf13/cobra"
 	"net/http"
 	_ "net/http/pprof" //so we can have debugging on localhost:3000 - See http://godoc.org/net/http/pprof
@@ -73,11 +73,9 @@ func ProcessConsoleCommand(cfg Config) {
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 1 {
 				name := args[0]
-				password, err := gopass.GetPass("Enter password:")
-				if err != nil {
-					panic(err)
-				}
-				err = CreateUser(name, password, false)
+				fmt.Print("Enter password:")
+				password := string(gopass.GetPasswd())
+				err := CreateUser(name, password, false)
 				if err != nil {
 					panic(err)
 				}
@@ -96,11 +94,9 @@ func ProcessConsoleCommand(cfg Config) {
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 1 {
 				name := args[0]
-				password, err := gopass.GetPass("Enter password:")
-				if err != nil {
-					panic(err)
-				}
-				err = CreateUser(name, password, true)
+				fmt.Print("Enter password:")
+				password := string(gopass.GetPasswd())
+				err := CreateUser(name, password, true)
 				if err != nil {
 					panic(err)
 				}

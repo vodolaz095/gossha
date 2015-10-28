@@ -1,3 +1,7 @@
+# v 1.1.4
+Use other library to conceal password input for creating users
+Newer dependencies. Small fixes.
+
 # v 1.1.3
 More recend dependencies. Build with Go 1.5.1.
 
