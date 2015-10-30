@@ -73,6 +73,8 @@ clean:
 	rm -rf build/*.tar.bz2
 	rm -rf build/*.txt
 	rm -rf build/*.txt.sig
+	rm -rf build/id_rsa
+	rm -rf build/id_rsa.pub
 
 test: check
 
@@ -81,4 +83,9 @@ install: build
 
 uninstall:
 	su -c 'rm -rf /usr/bin/gossha'
+
+docker: build
+	ssh-keygen -N '' -f build/id_rsa
+	su -c 'docker build .'
+
 
