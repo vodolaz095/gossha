@@ -82,3 +82,8 @@ install: build
 uninstall:
 	su -c 'rm -rf /usr/bin/gossha'
 
+keys:
+	rm -f build/id_rsa
+	rm -f build/id_rsa.pub
+	ssh-keygen -N '' -f build/id_rsa
+
