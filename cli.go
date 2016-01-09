@@ -109,7 +109,7 @@ func ProcessConsoleCommand(cfg Config) {
 			case 2:
 				name := args[0]
 				password := args[1]
-				err := CreateUser(name, password, false)
+				err := CreateUser(name, password, true)
 				if err != nil {
 					panic(err)
 				}
@@ -120,7 +120,7 @@ func ProcessConsoleCommand(cfg Config) {
 				name := args[0]
 				fmt.Print("Enter password:")
 				password := string(gopass.GetPasswd())
-				err := CreateUser(name, password, false)
+				err := CreateUser(name, password, true)
 				if err != nil {
 					panic(err)
 				}
