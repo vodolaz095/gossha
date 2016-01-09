@@ -6,6 +6,7 @@ package gossha
 
 import (
 	"fmt"
+
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/terminal"

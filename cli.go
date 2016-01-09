@@ -3,13 +3,14 @@ package gossha
 import (
 	"encoding/base64"
 	"fmt"
-	"github.com/howeyc/gopass"
-	"github.com/spf13/cobra"
 	"net/http"
 	_ "net/http/pprof" //so we can have debugging on localhost:3000 - See http://godoc.org/net/http/pprof
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/howeyc/gopass"
+	"github.com/spf13/cobra"
 )
 
 // Greet writes some motivating text alongside with application version
@@ -67,11 +68,22 @@ func ProcessConsoleCommand(cfg Config) {
 		},
 	}
 	var passwdCmd = &cobra.Command{
-		Use:   "passwd [username]",
+		Use:   "passwd [username] [password]",
 		Short: "Creates user or set new password to existent one",
 		Long:  "Creates user or set new password to existent one",
 		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) == 1 {
+			switch len(args) {
+			case 2:
+				name := args[0]
+				password := args[1]
+				err := CreateUser(name, password, false)
+				if err != nil {
+					panic(err)
+				}
+				fmt.Printf("User %v is created and/or new password is set!\n", name)
+				os.Exit(0)
+				break
+			case 1:
 				name := args[0]
 				fmt.Print("Enter password:")
 				password := string(gopass.GetPasswd())
@@ -81,28 +93,41 @@ func ProcessConsoleCommand(cfg Config) {
 				}
 				fmt.Printf("User %v is created and/or new password is set!\n", name)
 				os.Exit(0)
-			} else {
+				break
+			default:
 				fmt.Printf("Enter user's name!\n")
 				os.Exit(1)
 			}
 		},
 	}
 	var makeRootUserCmd = &cobra.Command{
-		Use:   "root [username]",
+		Use:   "root [username] [password]",
 		Short: "Creates root user or set new password to existent one",
 		Long:  "Creates root user or set new password to existent one",
 		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) == 1 {
+			switch len(args) {
+			case 2:
 				name := args[0]
-				fmt.Print("Enter password:")
-				password := string(gopass.GetPasswd())
-				err := CreateUser(name, password, true)
+				password := args[1]
+				err := CreateUser(name, password, false)
 				if err != nil {
 					panic(err)
 				}
-				fmt.Printf("User %v is created and/or new password is set!\n", name)
+				fmt.Printf("Admin %v is created and/or new password is set!\n", name)
 				os.Exit(0)
-			} else {
+				break
+			case 1:
+				name := args[0]
+				fmt.Print("Enter password:")
+				password := string(gopass.GetPasswd())
+				err := CreateUser(name, password, false)
+				if err != nil {
+					panic(err)
+				}
+				fmt.Printf("Admin %v is created and/or new password is set!\n", name)
+				os.Exit(0)
+				break
+			default:
 				fmt.Printf("Enter user's name!\n")
 				os.Exit(1)
 			}
