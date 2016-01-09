@@ -1,3 +1,15 @@
+# v 1.1.5
+Ability to set password for users from shell by calling
+
+```shell
+
+	$ gossha passwd user password
+	$ gossha root user password	
+
+```
+	
+Many typos fixed. Dockerfile provided.
+
 # v 1.1.4
 Use other library to conceal password input for creating users
 Newer dependencies. Small fixes.

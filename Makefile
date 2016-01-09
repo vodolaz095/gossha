@@ -1,4 +1,4 @@
-export semver=1.1.4
+export semver=1.1.5
 export arch=$(shell uname)-$(shell uname -m)
 export gittip=$(shell git log --format='%h' -n 1)
 export ver=$(semver).$(gittip).$(arch)
@@ -84,8 +84,11 @@ install: build
 uninstall:
 	su -c 'rm -rf /usr/bin/gossha'
 
-docker: build
-	ssh-keygen -N '' -f build/id_rsa
+docker: keys build
 	su -c 'docker build .'
 
+keys:
+	rm -f build/id_rsa
+	rm -f build/id_rsa.pub
+	ssh-keygen -N '' -f build/id_rsa
 

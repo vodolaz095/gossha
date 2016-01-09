@@ -187,7 +187,7 @@ Possible pairs of values are
 ```
 by default, the `sqlite3` driver is used with database stored at `$HOME/.gossha/gossha.db`.
 We can load `driver` from `--driver=sqlite3` flag or `GOSSHA_DRIVER=sqlite3` environment value
-We can load `connectionString` from `--connectionString=:memory:` flag or `connectionString=:memory:` environment value
+We can load `connectionString` from `--connectionString=:memory:` flag or `GOSSHA_CONNECTIONSTRING=:memory:` environment value
 
 ***SshPublicKeyPath*** points to Public Key to be used by SSH server, default value is `$HOME/.ssh/id_rsa.pub`.
 Can be set via `--sshPublicKeyPath=/home/myusername/.ssh/id_rsa.pub` flag or `GOSSHA_SSHPUBLICKEYPATH=/home/myusername/.ssh/id_rsa.pub` environment value.

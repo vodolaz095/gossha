@@ -193,7 +193,7 @@ Can be enabled by `--debug=true` flag, or via `GOSSHA_DEBUG=true` environment va
 По умолчанию используется драйвер базы данных `sqlite3` с базой, хранящейся в `$HOME/.gossha/gossha.db`.
 Параметр `driver` можно задать флагом командной строки `--driver=sqlite3` или переменной окружения `GOSSHA_DRIVER=sqlite3`
 Параметр  `connectionString` можно задать флагом командной строки `--connectionString=:memory:`
-или переменной окружения `connectionString=:memory:`.
+или переменной окружения `GOSSHA_CONNECTIONSTRING=:memory:`.
 
 ***SshPublicKeyPath*** указывает на путь к файлу публичного ключа, используемого SSH сервером.
 Значение по умолчанию `$HOME/.ssh/id_rsa.pub`.
