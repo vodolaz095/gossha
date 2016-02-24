@@ -23,7 +23,7 @@ engrave:
 deps:
 	go get -u github.com/tools/godep
 	go get -u github.com/golang/lint/golint
-	godep restore
+	godep go install
 
 check: deps
 	gofmt  -w=true -s=true -l=true ./..
@@ -33,7 +33,7 @@ check: deps
 
 
 build: clean engrave deps check
-	go build -o "build/gossha" app/gossha.go
+	godep go build -o "build/gossha" app/gossha.go
 	git checkout ver.go
 
 dist: build
