@@ -121,29 +121,30 @@ func (h *Handler) AutoCompleteCallback(s string, pos int, r rune) (string, int, 
 // ProcessCommand reads commands from terminal and processes them
 func (h *Handler) ProcessCommand(connection ssh.Channel, term *terminal.Terminal, command string) {
 	tokens := strings.Split(command, "")
-	switch tokens[0] {
-	case "\\":
-		a := strings.Split(strings.TrimLeft(command, "\\"), " ")
-		f, ok := h.KnownCommands[a[0]]
-		if ok {
-			go func() { //todo not sure about it, need more tests
-				err := Invoke(h, f.Command, connection, term, a)
-				if err != nil {
-					term.Write([]byte(fmt.Sprintf("Error - %v\n\r", err.Error())))
-				}
-			}()
-		} else {
-			h.PrintHelpForUser(connection, term, a)
+	if len(tokens) > 0 {
+		switch tokens[0] {
+		case "\\":
+			a := strings.Split(strings.TrimLeft(command, "\\"), " ")
+			f, ok := h.KnownCommands[a[0]]
+			if ok {
+				go func() { //todo not sure about it, need more tests
+					err := Invoke(h, f.Command, connection, term, a)
+					if err != nil {
+						term.Write([]byte(fmt.Sprintf("Error - %v\n\r", err.Error())))
+					}
+				}()
+			} else {
+				h.PrintHelpForUser(connection, term, a)
+			}
+			break
+		case "@":
+			h.SendPrivateMessage(connection, term, command)
+			break
+		default:
+			err := h.SendMessage(connection, term, command)
+			if err != nil {
+				term.Write([]byte(fmt.Sprintf("Error - %v\n\r", err.Error())))
+			}
 		}
-		break
-	case "@":
-		h.SendPrivateMessage(connection, term, command)
-		break
-	default:
-		err := h.SendMessage(connection, term, command)
-		if err != nil {
-			term.Write([]byte(fmt.Sprintf("Error - %v\n\r", err.Error())))
-		}
-
 	}
 }
