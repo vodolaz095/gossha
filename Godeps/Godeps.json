@@ -9,48 +9,16 @@
 		},
 		{
 			"ImportPath": "github.com/go-sql-driver/mysql",
-			"Comment": "v1.2-175-g1309049",
-			"Rev": "1309049fd598c1faa0290fd70ab1afde2b6df0f9"
+			"Comment": "v1.2-177-g71f003c",
+			"Rev": "71f003c6e927d2550713e7637affb769977ece78"
 		},
 		{
 			"ImportPath": "github.com/hashicorp/hcl",
 			"Rev": "1c284ec98f4b398443cbabb0d9197f7f4cc0077c"
 		},
 		{
-			"ImportPath": "github.com/hashicorp/hcl/hcl/ast",
-			"Rev": "1c284ec98f4b398443cbabb0d9197f7f4cc0077c"
-		},
-		{
-			"ImportPath": "github.com/hashicorp/hcl/hcl/parser",
-			"Rev": "1c284ec98f4b398443cbabb0d9197f7f4cc0077c"
-		},
-		{
-			"ImportPath": "github.com/hashicorp/hcl/hcl/scanner",
-			"Rev": "1c284ec98f4b398443cbabb0d9197f7f4cc0077c"
-		},
-		{
-			"ImportPath": "github.com/hashicorp/hcl/hcl/strconv",
-			"Rev": "1c284ec98f4b398443cbabb0d9197f7f4cc0077c"
-		},
-		{
-			"ImportPath": "github.com/hashicorp/hcl/hcl/token",
-			"Rev": "1c284ec98f4b398443cbabb0d9197f7f4cc0077c"
-		},
-		{
-			"ImportPath": "github.com/hashicorp/hcl/json/parser",
-			"Rev": "1c284ec98f4b398443cbabb0d9197f7f4cc0077c"
-		},
-		{
-			"ImportPath": "github.com/hashicorp/hcl/json/scanner",
-			"Rev": "1c284ec98f4b398443cbabb0d9197f7f4cc0077c"
-		},
-		{
-			"ImportPath": "github.com/hashicorp/hcl/json/token",
-			"Rev": "1c284ec98f4b398443cbabb0d9197f7f4cc0077c"
-		},
-		{
 			"ImportPath": "github.com/howeyc/gopass",
-			"Rev": "88d06c8eecdb5a498ee6165b19d4bc8e394ba273"
+			"Rev": "c89a32868e47b1b7ef388b4d94318b359506400a"
 		},
 		{
 			"ImportPath": "github.com/inconshreveable/mousetrap",
@@ -75,16 +43,6 @@
 		},
 		{
 			"ImportPath": "github.com/lib/pq",
-			"Comment": "go1.0-cutoff-81-g69552e5",
-			"Rev": "69552e54d2a9d4c6a2438926a774930f7bc398ec"
-		},
-		{
-			"ImportPath": "github.com/lib/pq/hstore",
-			"Comment": "go1.0-cutoff-81-g69552e5",
-			"Rev": "69552e54d2a9d4c6a2438926a774930f7bc398ec"
-		},
-		{
-			"ImportPath": "github.com/lib/pq/oid",
 			"Comment": "go1.0-cutoff-81-g69552e5",
 			"Rev": "69552e54d2a9d4c6a2438926a774930f7bc398ec"
 		},
@@ -128,15 +86,11 @@
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/curve25519",
-			"Rev": "1f22c0103821b9390939b6776727195525381532"
+			"Rev": "5dc8cb4b8a8eb076cbb5a06bc3b8682c15bdbbd3"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh",
-			"Rev": "1f22c0103821b9390939b6776727195525381532"
-		},
-		{
-			"ImportPath": "golang.org/x/crypto/ssh/terminal",
-			"Rev": "1f22c0103821b9390939b6776727195525381532"
+			"Rev": "5dc8cb4b8a8eb076cbb5a06bc3b8682c15bdbbd3"
 		},
 		{
 			"ImportPath": "gopkg.in/fsnotify.v1",
