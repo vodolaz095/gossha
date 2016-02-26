@@ -4,11 +4,8 @@
 
 FROM fedora:23
 
-# Upgrade dependencies
-RUN dnf upgrade -y
-
-# Clear cache
-RUN dnf clean all
+# Upgrade dependencies and clean dnf cache to reduce image size
+RUN dnf upgrade -y && dnf clean all
 
 # Listen on 22 port
 ENV GOSSHA_PORT=22
