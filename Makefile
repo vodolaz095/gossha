@@ -28,7 +28,7 @@ check: deps
 	gofmt  -w=true -s=true -l=true ./..
 	golint ./...
 	go vet
-	go test -v
+	godep go test -v
 
 
 build: clean engrave deps check
