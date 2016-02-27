@@ -23,7 +23,8 @@ engrave:
 deps:
 	go get -u github.com/tools/godep
 	go get -u github.com/golang/lint/golint
-	godep restore
+	go get -v .
+	godep restore -v
 
 check: deps
 	gofmt  -w=true -s=true -l=true ./..
