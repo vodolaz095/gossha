@@ -6,10 +6,11 @@ package gossha
 
 import (
 	"fmt"
-	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
 	"strings"
 	"time"
+
+	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 // Leave notifies, that user has gone and close connection
@@ -70,17 +71,24 @@ func (h *Handler) Info(connection ssh.Channel, term *terminal.Terminal, args []s
 // SignUpUser creates new user account, it requires root permissions
 func (h *Handler) SignUpUser(connection ssh.Channel, term *terminal.Terminal, args []string) error {
 	if h.CurrentUser.Root {
-		fmt.Println(args)
-		if len(args) == 2 {
+		//fmt.Println(args)
+		switch len(args) {
+		case 3:
 			name := args[1]
-			term.Write([]byte("Trying to signup/register/set password for user with name " + name + "!\n\rEnter new password:\n\r"))
-			password, err := term.ReadPassword(">")
+			password := args[2]
+			return CreateUser(name, password, false)
+
+		case 2:
+			name := args[1]
+			password, err := term.ReadPassword(fmt.Sprintf("Enter password for user `%s`>", name))
 			if err != nil {
 				return err
 			}
 			return CreateUser(name, password, false)
+
+		default:
+			return fmt.Errorf("Try `\\r someUserName [newPassword]` to sign up or change password for somebody!")
 		}
-		return fmt.Errorf("Name is empty, try `\\s someUserName`!")
 	}
 	return fmt.Errorf("You have to be root to signing up/registering/changing password!")
 }
@@ -88,17 +96,24 @@ func (h *Handler) SignUpUser(connection ssh.Channel, term *terminal.Terminal, ar
 // SignUpRoot creates new user account, it requires root permissions
 func (h *Handler) SignUpRoot(connection ssh.Channel, term *terminal.Terminal, args []string) error {
 	if h.CurrentUser.Root {
-		fmt.Println(args)
-		if len(args) == 2 {
+		//fmt.Println(args)
+		switch len(args) {
+		case 3:
 			name := args[1]
-			term.Write([]byte("Trying to signup/register/set password for root user with name " + name + "!\n\rEnter new password:\n\r"))
-			password, err := term.ReadPassword(">")
+			password := args[2]
+			return CreateUser(name, password, true)
+
+		case 2:
+			name := args[1]
+			password, err := term.ReadPassword(fmt.Sprintf("Enter password for user `%s`>", name))
 			if err != nil {
 				return err
 			}
 			return CreateUser(name, password, true)
+
+		default:
+			return fmt.Errorf("Try `\\rr someUserName [newPassword]` to sign up or change password for somebody with root permissions!")
 		}
-		return fmt.Errorf("Name is empty, try `\\s someUserName`!")
 	}
 	return fmt.Errorf("You have to be root to signing up/registering/changing password!")
 }
@@ -111,7 +126,7 @@ func (h *Handler) Ban(connection ssh.Channel, term *terminal.Terminal, args []st
 			term.Write([]byte("Trying to ban " + name + "!\n\r"))
 			return BanUser(name)
 		}
-		return fmt.Errorf("Name is empty, try `\\s someUserName`!")
+		return fmt.Errorf("Name is empty, try `\\b someUserName`!")
 	}
 	return fmt.Errorf("You have to be root to signing up/registering/changing password!")
 }
