@@ -4,7 +4,7 @@
 
 FROM fedora:23
 
-# Upgrade dependencies and clear dnf cache to reduce image size
+# Upgrade dependencies and clear DNF cache to reduce image size
 RUN dnf upgrade -y && dnf clean all
 
 # Listen on 22 port

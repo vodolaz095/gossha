@@ -1,3 +1,6 @@
+# v 1.1.6
+Newer dependencies. Build with Go 1.5.3
+
 # v 1.1.5
 Ability to set password for users from shell by calling
 
@@ -15,7 +18,7 @@ Use other library to conceal password input for creating users
 Newer dependencies. Small fixes.
 
 # v 1.1.3
-More recend dependencies. Build with Go 1.5.1.
+More recent dependencies. Build with Go 1.5.1.
 
 # v 1.1.2
 More recent dependencies, build with go1.4.2 linux/amd64

@@ -1,4 +1,4 @@
-export semver=1.1.5
+export semver=1.1.6
 export arch=$(shell uname)-$(shell uname -m)
 export gittip=$(shell git log --format='%h' -n 1)
 export ver=$(semver).$(gittip).$(arch)
@@ -23,6 +23,8 @@ engrave:
 deps:
 	go get -u github.com/tools/godep
 	go get -u github.com/golang/lint/golint
+	go get -v .
+	godep restore -v
 
 check: deps
 	gofmt  -w=true -s=true -l=true ./..
