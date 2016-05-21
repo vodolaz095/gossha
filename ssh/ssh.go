@@ -22,12 +22,12 @@ import (
 //}
 
 // StartSSHD starts the ssh server on address:port provided
-func StartSSHD(addr string) {
+func StartSSHD(addr string) error {
 	handler.Board = make(map[string]*handler.Handler, 0)
 
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
-		panic(fmt.Sprintf("Failed to listen on %v port. Reason: (%s)", addr, err.Error()))
+		return fmt.Errorf("Failed to listen on %v port. Reason: (%s)", addr, err.Error())
 	}
 
 	fmt.Printf("GoSSHa is listening on %v port!\n", addr)
