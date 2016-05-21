@@ -29,6 +29,8 @@ type Config struct {
 	ExecuteOnPrivateMessage string   `json:"executeOnPrivateMessage"`
 }
 
+var RuntimeConfig *Config
+
 // MakeDSNHelp returns some help regarding database connection string
 func MakeDSNHelp() string {
 	var dsnHelpArr []string
@@ -191,6 +193,7 @@ func InitConfig() (Config, error) {
 		return config, err
 
 	}
+	RuntimeConfig = &config
 	return config, nil
 }
 

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/vodolaz095/gossha/config"
 	"github.com/vodolaz095/gossha/lib"
 	"github.com/vodolaz095/gossha/models"
 	"golang.org/x/crypto/ssh"
@@ -122,7 +123,7 @@ func (h *Handler) LoginByPublicKey(c ssh.ConnMetadata, publicKey string) error {
 // to this handler context
 // see http://godoc.org/golang.org/x/crypto/ssh#ServerConfig for details
 func (h *Handler) MakeSSHConfig() *ssh.ServerConfig {
-	config := &ssh.ServerConfig{
+	sshConfig := &ssh.ServerConfig{
 		PasswordCallback: func(c ssh.ConnMetadata, pass []byte) (*ssh.Permissions, error) {
 			return nil, h.LoginByUsernameAndPassword(c, string(pass))
 		},
@@ -141,15 +142,15 @@ func (h *Handler) MakeSSHConfig() *ssh.ServerConfig {
 		},
 		NoClientAuth: false,
 	}
-	privateBytes, err := ioutil.ReadFile(RuntimeConfig.SSHPrivateKeyPath)
+	privateBytes, err := ioutil.ReadFile(config.RuntimeConfig.SSHPrivateKeyPath)
 	if err != nil {
-		panic("Failed to load private key from " + RuntimeConfig.SSHPrivateKeyPath)
+		panic("Failed to load private key from " + config.RuntimeConfig.SSHPrivateKeyPath)
 	}
 	private, err := ssh.ParsePrivateKey(privateBytes)
 	if err != nil {
 		panic("Failed to parse private key")
 	}
 
-	config.AddHostKey(private)
-	return config
+	sshConfig.AddHostKey(private)
+	return sshConfig
 }

@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"net"
 	"reflect"
-	"strings"
 )
 
 // GetRemoteHostname tries to resolve remote hostname by ip

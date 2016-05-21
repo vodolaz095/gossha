@@ -5,7 +5,7 @@ import (
 	"net"
 
 	"github.com/vodolaz095/gossha/handler"
-	"github.com/vodolaz095/gossha/models"
+	//	"github.com/vodolaz095/gossha/models"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -23,6 +23,8 @@ import (
 
 // StartSSHD starts the ssh server on address:port provided
 func StartSSHD(addr string) {
+	handler.Board = make(map[string]*handler.Handler, 0)
+
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to listen on %v port. Reason: (%s)", addr, err.Error()))
@@ -51,13 +53,13 @@ func StartSSHD(addr string) {
 	}
 }
 
-func handleChannels(chans <-chan ssh.NewChannel, handler *Handler) {
+func handleChannels(chans <-chan ssh.NewChannel, h *handler.Handler) {
 	for newChannel := range chans {
-		go handleChannel(newChannel, handler)
+		go handleChannel(newChannel, h)
 	}
 }
 
-func handleChannel(newChannel ssh.NewChannel, handler *Handler) {
+func handleChannel(newChannel ssh.NewChannel, h *handler.Handler) {
 	if t := newChannel.ChannelType(); t != "session" {
 		newChannel.Reject(ssh.UnknownChannelType, fmt.Sprintf("unknown channel type: %s", t))
 		return
@@ -122,35 +124,35 @@ func handleChannel(newChannel ssh.NewChannel, handler *Handler) {
 		}()
 	*/
 
-	Board[handler.SessionID] = handler
-	term := terminal.NewTerminal(connection, handler.PrintPrompt())
-	term.AutoCompleteCallback = handler.AutoCompleteCallback
-	handler.PrintHelpForUser(connection, term, []string{})
-	msgs, err := handler.GetMessages(100)
+	handler.Board[h.SessionID] = h
+	term := terminal.NewTerminal(connection, h.PrintPrompt())
+	term.AutoCompleteCallback = h.AutoCompleteCallback
+	h.PrintHelpForUser(connection, term, []string{})
+	msgs, err := h.GetMessages(100)
 	if err != nil {
 		panic(err)
 	}
 	for _, v := range msgs {
-		handler.PrintNotification(&v, term)
+		h.PrintNotification(&v, term)
 	}
 	go func() {
 		for {
-			n1 := <-handler.Nerve
-			handler.PrintNotification(&n1, term)
+			n1 := <-h.Nerve
+			h.PrintNotification(&n1, term)
 		}
 	}()
 	go func() {
 		defer func() {
 			connection.Close()
-			delete(Board, handler.SessionID)
-			handler.Leave(connection, term, []string{})
+			delete(handler.Board, h.SessionID)
+			h.Leave(connection, term, []string{})
 		}()
 		for {
 			line, err := term.ReadLine()
 			if err != nil {
 				break
 			}
-			handler.ProcessCommand(connection, term, line)
+			h.ProcessCommand(connection, term, line)
 		}
 	}()
 }

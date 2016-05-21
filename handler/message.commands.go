@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/vodolaz095/gossha/config"
 	"github.com/vodolaz095/gossha/models"
 )
 
@@ -49,7 +50,7 @@ func (h *Handler) SendMessage(connection ssh.Channel, term *terminal.Terminal, i
 		return err
 	}
 
-	if RuntimeConfig.ExecuteOnMessage != "" {
+	if config.RuntimeConfig.ExecuteOnMessage != "" {
 		err = os.Setenv("GOSSHA_USERNAME", h.CurrentUser.Name)
 		if err != nil {
 			return err
@@ -78,7 +79,7 @@ func (h *Handler) SendMessage(connection ssh.Channel, term *terminal.Terminal, i
 				return err
 			}
 		}
-		chld := exec.Command(RuntimeConfig.ExecuteOnMessage)
+		chld := exec.Command(config.RuntimeConfig.ExecuteOnMessage)
 		_, err := chld.StdoutPipe()
 		chld.Start()
 		//fmt.Println("Executing", output)
@@ -130,7 +131,7 @@ func (h *Handler) SendPrivateMessage(connection ssh.Channel, term *terminal.Term
 	if !messageSend {
 		term.Write([]byte("Unable to send private message, user is offline!"))
 	}
-	if RuntimeConfig.ExecuteOnPrivateMessage != "" {
+	if config.RuntimeConfig.ExecuteOnPrivateMessage != "" {
 		err := os.Setenv("GOSSHA_USERNAME", h.CurrentUser.Name)
 		if err != nil {
 			return err
@@ -165,7 +166,7 @@ func (h *Handler) SendPrivateMessage(connection ssh.Channel, term *terminal.Term
 			return err
 		}
 
-		chld := exec.Command(RuntimeConfig.ExecuteOnPrivateMessage)
+		chld := exec.Command(config.RuntimeConfig.ExecuteOnPrivateMessage)
 		_, err = chld.StdoutPipe()
 		chld.Start()
 		//fmt.Println("Executing", output)

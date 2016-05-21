@@ -50,12 +50,12 @@ func (h *Handler) Who(connection ssh.Channel, term *terminal.Terminal, args []st
 // Info prints additional information about yourself
 func (h *Handler) Info(connection ssh.Channel, term *terminal.Terminal, args []string) error {
 	var cmds []string
-	var sessions []Session
+	var sessions []models.Session
 
 	cmds = append(cmds, fmt.Sprintf("You are %v, logged from %v with IP of %v\n\r", h.CurrentUser.Name, h.Hostname, h.IP))
 	cmds = append(cmds, "Your previous sessions: \n\r")
 
-	err := DB.Table("session").Find(&sessions).Where("userId=?", h.CurrentUser.ID).Error
+	err := models.DB.Table("session").Find(&sessions).Where("userId=?", h.CurrentUser.ID).Error
 	if err != nil {
 		return err
 	}

@@ -8,10 +8,13 @@ import (
 	"os/exec"
 	"time"
 
+	"github.com/vodolaz095/gossha/config"
 	"github.com/vodolaz095/gossha/models"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/terminal"
 )
+
+var sep = string(os.PathSeparator)
 
 // ExecCommand executes custom user scripts from home directory. It checks, if
 //the script file is executable, and than it executes it, setting the environment
@@ -27,12 +30,16 @@ func (h *Handler) ExecCommand(connection ssh.Channel, term *terminal.Terminal, i
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
-		err := DB.Table("Message").Create(&mesg).Error
+		err := models.DB.Table("Message").Create(&mesg).Error
 		if err != nil {
 			return err
 		}
 		h.Broadcast(&mesg, true, false)
-		scriptPath := fmt.Sprintf("%v%vscripts%v%v", GetHomeDir(), sep, sep, cmd)
+		hmdr, err := config.GetHomeDir()
+		if err != nil {
+			return err
+		}
+		scriptPath := fmt.Sprintf("%v%vscripts%v%v", hmdr, sep, sep, cmd)
 		fi, err := os.Stat(scriptPath)
 		if err != nil {
 			if os.IsNotExist(err) {
@@ -93,7 +100,12 @@ func (h *Handler) ExecCommand(connection ssh.Channel, term *terminal.Terminal, i
 		}
 		return fmt.Errorf("Unable to execute command, the %v is not a executable!", scriptPath)
 	}
-	files, err := ioutil.ReadDir(fmt.Sprintf("%v%vscripts", GetHomeDir(), sep))
+	hmdr, err := config.GetHomeDir()
+	if err != nil {
+		return err
+	}
+
+	files, err := ioutil.ReadDir(fmt.Sprintf("%v%vscripts", hmdr, sep))
 	if err != nil {
 		return err
 	}
