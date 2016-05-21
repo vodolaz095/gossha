@@ -1,11 +1,25 @@
-package gossha
+package ssh
 
 import (
 	"fmt"
+	"net"
+
+	"github.com/vodolaz095/gossha/handler"
+	"github.com/vodolaz095/gossha/models"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/terminal"
-	"net"
 )
+
+////HandlerInterface describes the handler
+//type HandlerInterface interface {
+//	MakeSSHConfig() (*ssh.ServerConfig, error)
+//	PrintPrompt() string
+//	AutoCompleteCallback(s string, pos int, r rune) (string, int, bool)
+//	PrintHelpForUser(connection ssh.Channel, term *terminal.Terminal, command []string) error
+//	GetMessages(int limit) ([]models.Notification, error)
+//	ProcessCommand(connection ssh.Channel, term *terminal.Terminal, command []string) error
+//	Leave(connection ssh.Channel, term *terminal.Terminal, command []string) error
+//}
 
 // StartSSHD starts the ssh server on address:port provided
 func StartSSHD(addr string) {
@@ -22,8 +36,8 @@ func StartSSHD(addr string) {
 			fmt.Printf("Failed to accept incoming connection (%s)\n", err)
 			continue
 		}
-		handler := New()
-		config := handler.MakeSSHConfig()
+		h := handler.New()
+		config := h.MakeSSHConfig()
 		_, chans, reqs, err := ssh.NewServerConn(tcpConn, config)
 		//		sshConn, chans, reqs, err := ssh.NewServerConn(tcpConn, config)
 		if err != nil {
@@ -33,7 +47,7 @@ func StartSSHD(addr string) {
 
 		//		fmt.Sprintf("New SSH connection from %s (%s)", sshConn.RemoteAddr(), sshConn.ClientVersion())
 		go ssh.DiscardRequests(reqs)
-		go handleChannels(chans, &handler)
+		go handleChannels(chans, &h)
 	}
 }
 

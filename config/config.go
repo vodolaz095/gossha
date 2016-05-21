@@ -1,12 +1,14 @@
-package gossha
+package config
 
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"strings"
+
 	homedir "github.com/mitchellh/go-homedir"
 	flag "github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"os"
 )
 
 var sep = string(os.PathSeparator)
@@ -27,45 +29,58 @@ type Config struct {
 	ExecuteOnPrivateMessage string   `json:"executeOnPrivateMessage"`
 }
 
+// MakeDSNHelp returns some help regarding database connection string
+func MakeDSNHelp() string {
+	var dsnHelpArr []string
+	dsnHelpArr = append(dsnHelpArr, "Database connection string. Examples:")
+	dsnHelpArr = append(dsnHelpArr, "   	--driver=sqlite3 --connectionString=/var/lib/gossha/gossha.db")
+	dsnHelpArr = append(dsnHelpArr, "   	--driver=sqlite3 --connectionString=:memory:")
+	dsnHelpArr = append(dsnHelpArr, "   	--driver=mysql --connectionString=user:password@localhost/dbname?charset=utf8&parseTime=True&loc=Local")
+	dsnHelpArr = append(dsnHelpArr, "   	--driver=postgres --connectionString='user=gorm dbname=gorm sslmode=disable'")
+	dsnHelpArr = append(dsnHelpArr, "   	--driver=postgres --connectionString=postgres://pqgotest:password@localhost/pqgotest?sslmode=verify-full")
+	dsnHelp := strings.Join(dsnHelpArr, "\n")
+	return dsnHelp
+}
+
 // GetHomeDir returns the current working directory of application,
 // usually the $HOME/.gossha
-func GetHomeDir() string {
+func GetHomeDir() (string, error) {
 	hmdr, err := homedir.Dir()
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	return fmt.Sprintf("%v%v.gossha", hmdr, sep)
+	return fmt.Sprintf("%v%v.gossha", hmdr, sep), nil
 }
 
 // GetDatabasePath returns the current sqlite database path of application,
 // usually the $HOME/.gossha/gossha.db
-func GetDatabasePath() string {
+func GetDatabasePath() (string, error) {
 	hmdr, err := homedir.Dir()
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	return fmt.Sprintf("%v%v.gossha%vgossha.db", hmdr, sep, sep)
+	return fmt.Sprintf("%v%v.gossha%vgossha.db", hmdr, sep, sep), nil
 }
 
 // GetPrivateKeyPath returns the current private ssh key location, usually
 // the `$HOME/.ssh/id_rsa` one
-func GetPrivateKeyPath() string {
+func GetPrivateKeyPath() (string, error) {
 	hmdr, err := homedir.Dir()
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	return fmt.Sprintf("%v%v.ssh%vid_rsa", hmdr, sep, sep)
+	return fmt.Sprintf("%v%v.ssh%vid_rsa", hmdr, sep, sep), nil
 }
 
 // GetPublicKeyPath returns the current public ssh key location, usually
 // the `$HOME/.ssh/id_rsa.pub` one
-func GetPublicKeyPath() string {
+func GetPublicKeyPath() (string, error) {
 	hmdr, err := homedir.Dir()
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	sep := string(os.PathSeparator)
-	return fmt.Sprintf("%v%v.ssh%vid_rsa.pub", hmdr, sep, sep)
+	return fmt.Sprintf("%v%v.ssh%vid_rsa.pub", hmdr, sep, sep), nil
 }
 
 // InitConfig creates configuration object, either by loading JSON file from this
@@ -93,17 +108,33 @@ func InitConfig() (Config, error) {
 	flag.String("driver", "sqlite3", "set the database driver to use, possible values are `sqlite3`,`mysql`,`postgres`")
 	viper.BindPFlag("driver", flag.Lookup("driver"))
 
-	flag.String("connectionString", GetDatabasePath(), MakeDSNHelp())
+	hmdr, err := GetHomeDir()
+	if err != nil {
+		return config, err
+	}
+	flag.String("homedir", hmdr, "The home directory of module, usually $HOME/.gossha")
+	viper.BindPFlag("homedir", flag.Lookup("homedir"))
+
+	dbPath, err := GetDatabasePath()
+	if err != nil {
+		return config, err
+	}
+	flag.String("connectionString", dbPath, MakeDSNHelp())
 	viper.BindPFlag("connectionString", flag.Lookup("connectionString"))
 
-	flag.String("sshPublicKeyPath", GetPublicKeyPath(), "location of public ssh key to be used with server, usually the $HOME/.ssh/id_rsa.pub")
+	publicKeyPath, err := GetPublicKeyPath()
+	if err != nil {
+		return config, err
+	}
+	flag.String("sshPublicKeyPath", publicKeyPath, "location of public ssh key to be used with server, usually the $HOME/.ssh/id_rsa.pub")
 	viper.BindPFlag("sshPublicKeyPath", flag.Lookup("sshPublicKeyPath"))
 
-	flag.String("sshPrivateKeyPath", GetPrivateKeyPath(), "location of private ssh key to be used with server, usually the $HOME/.ssh/id_rsa")
+	privateKeyPath, err := GetPrivateKeyPath()
+	if err != nil {
+		return config, err
+	}
+	flag.String("sshPrivateKeyPath", privateKeyPath, "location of private ssh key to be used with server, usually the $HOME/.ssh/id_rsa")
 	viper.BindPFlag("sshPrivateKeyPath", flag.Lookup("sshPrivateKeyPath"))
-
-	flag.String("homedir", GetHomeDir(), "The home directory of module, usually $HOME/.gossha")
-	viper.BindPFlag("homedir", flag.Lookup("homedir"))
 
 	flag.String("executeOnMessage", "", "Script to execute on each message")
 	viper.BindPFlag("executeOnMessage", flag.Lookup("executeOnMessage"))
@@ -133,8 +164,6 @@ func InitConfig() (Config, error) {
 
 	if err != nil {
 		if err.Error() == "open : no such file or directory" {
-
-			hmdr := GetHomeDir()
 			err := os.MkdirAll(hmdr, 0700)
 			if err != nil {
 				return config, err

@@ -179,7 +179,7 @@ func (h *Handler) SendPrivateMessage(connection ssh.Channel, term *terminal.Term
 func (h *Handler) Broadcast(mesg *models.Message, isSystem, isChat bool) {
 	for k, v := range Board {
 		if k != h.SessionID {
-			v.Nerve <- Notification{
+			v.Nerve <- models.Notification{
 				User:             h.CurrentUser,
 				Message:          *mesg,
 				IsSystem:         isSystem,
@@ -196,7 +196,7 @@ func (h *Handler) PrivateMessage(name string, mesg *models.Message) {
 	for k, v := range Board {
 		if k != h.SessionID {
 			if h.CurrentUser.Name == name {
-				v.Nerve <- Notification{User: h.CurrentUser, Message: *mesg, IsSystem: false, IsChat: false, IsPrivateMessage: true}
+				v.Nerve <- models.Notification{User: h.CurrentUser, Message: *mesg, IsSystem: false, IsChat: false, IsPrivateMessage: true}
 			}
 		}
 	}
@@ -205,14 +205,14 @@ func (h *Handler) PrivateMessage(name string, mesg *models.Message) {
 // GetMessages outputs recent messages in form of Notification array
 func (h *Handler) GetMessages(limit int) ([]models.Notification, error) {
 	var ret []models.Notification
-	var messages []Message
+	var messages []models.Message
 	var l int64
-	err := DB.Table("message").Preload("User").Where("message.id > ?", h.LastShownMessageID).Limit(limit).Order("message.id asc").Find(&messages).Error
+	err := models.DB.Table("message").Preload("User").Where("message.id > ?", h.LastShownMessageID).Limit(limit).Order("message.id asc").Find(&messages).Error
 	if err != nil {
 		return ret, err
 	}
 	for _, m := range messages {
-		ret = append(ret, Notification{User: m.User, Message: m, IsSystem: false, IsChat: true})
+		ret = append(ret, models.Notification{User: m.User, Message: m, IsSystem: false, IsChat: true})
 	}
 
 	if len(messages) > 0 {

@@ -65,8 +65,8 @@ func (h *Handler) addKnownCommand(key, commandName, help string) {
 func (h *Handler) PrintHelpForUser(connection ssh.Channel, term *terminal.Terminal, command []string) error {
 	var cmds []string
 	cmds = append(cmds, "GoSSHa - SSH powered chat. See https://github.com/vodolaz095/gossha for details...\n\r")
-	cmds = append(cmds, fmt.Sprintf("Build #%v \n\r", VERSION))
-	cmds = append(cmds, fmt.Sprintf("Version: %v \n\r", SUBVERSION))
+	//	cmds = append(cmds, fmt.Sprintf("Build #%v \n\r", VERSION))
+	//	cmds = append(cmds, fmt.Sprintf("Version: %v \n\r", SUBVERSION))
 	cmds = append(cmds, fmt.Sprintf("Commands available:\n\r"))
 	var keys []string
 	for k, v := range h.KnownCommands {
