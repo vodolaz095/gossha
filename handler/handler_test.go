@@ -1,4 +1,4 @@
-package gossha
+package handler
 
 import (
 	"net"

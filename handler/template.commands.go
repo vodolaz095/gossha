@@ -1,4 +1,4 @@
-package gossha
+package handler
 
 /*
  * Templating - used to pretty print data if needed
@@ -7,6 +7,8 @@ package gossha
 import (
 	"fmt"
 	"time"
+
+	"github.com/vodolaz095/gossha/models"
 	//	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -17,7 +19,7 @@ func (h *Handler) PrintPrompt() string {
 }
 
 // PrintMessage prints message in format of [username@hostname(192.168.1.2) *]{2006-1-2 15:04:05}:Hello!
-func (h *Handler) PrintMessage(m *Message, u *User) string {
+func (h *Handler) PrintMessage(m *models.Message, u *models.User) string {
 	var online string
 	if u.IsOnline() {
 		online = "*"
@@ -28,7 +30,7 @@ func (h *Handler) PrintMessage(m *Message, u *User) string {
 }
 
 // PrintNotification pretty prints the Notification recieved by Nerve into terminal given
-func (h *Handler) PrintNotification(n *Notification, term *terminal.Terminal) error {
+func (h *Handler) PrintNotification(n *models.Notification, term *terminal.Terminal) error {
 	msg := []byte(h.PrintMessage(&n.Message, &n.User))
 	if n.IsChat {
 		_, err := term.Write(term.Escape.White)

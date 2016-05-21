@@ -1,4 +1,4 @@
-package gossha
+package handler
 
 /*
  * User commands to process ssh keys fingerprints
@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/gorm"
+	"github.com/vodolaz095/gossha/models"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -21,11 +22,11 @@ func (h *Handler) ImportPublicKey(connection ssh.Channel, term *terminal.Termina
 	}
 	term.Write([]byte("Importing public key...\n\r"))
 	k := string(ssh.MarshalAuthorizedKey(fingerprint))
-	key := Key{
+	key := models.Key{
 		UserID:  h.CurrentUser.ID,
-		Content: Hash(k),
+		Content: models.Hash(k),
 	}
-	err := DB.Table("key").Create(&key).Error
+	err := models.DB.Table("key").Create(&key).Error
 	if err != nil {
 		term.Write([]byte("Error importing key, probably it is already imported!\n\r"))
 		return err
@@ -41,20 +42,20 @@ func (h *Handler) ForgotPublicKey(connection ssh.Channel, term *terminal.Termina
 		return fmt.Errorf("Public key is empty!")
 	}
 	k := string(ssh.MarshalAuthorizedKey(fingerprint))
-	key := Key{
+	key := models.Key{
 		UserID:  h.CurrentUser.ID,
-		Content: Hash(k),
+		Content: models.Hash(k),
 	}
-	err := DB.Table("key").Where("content=?", Hash(k)).First(&key).Error
+	err := models.DB.Table("key").Where("content=?", models.Hash(k)).First(&key).Error
 	if err == nil {
-		err = DB.Table("key").Delete(&key).Error
+		err = models.DB.Table("key").Delete(&key).Error
 		if err != nil {
 			return err
 		}
 		term.Write([]byte("Public key is removed! You'll need password in future to be able to authorize from this client.\n\r"))
 		return nil
 	}
-	if err == gorm.RecordNotFound {
+	if err == gorm.ErrRecordNotFound {
 		return nil
 	}
 	return err

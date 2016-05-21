@@ -1,4 +1,4 @@
-package gossha
+package handler
 
 /*
  * Authorization callbacks for SSH server by password and public key
@@ -6,25 +6,28 @@ package gossha
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
-	"golang.org/x/crypto/ssh"
 	"io/ioutil"
 	"strings"
 	"time"
+
+	"github.com/jinzhu/gorm"
+	"github.com/vodolaz095/gossha/lib"
+	"github.com/vodolaz095/gossha/models"
+	"golang.org/x/crypto/ssh"
 )
 
 // LoginByUsernameAndPassword is a authorization callback for ssh config
 // see http://godoc.org/golang.org/x/crypto/ssh#ServerConfig for details
 func (h *Handler) LoginByUsernameAndPassword(c ssh.ConnMetadata, password string) error {
-	user := User{}
+	user := models.User{}
 	name := c.User()
 	ip := strings.Split(c.RemoteAddr().String(), ":")[0]
-	hostname, err := GetRemoteHostname(ip)
+	hostname, err := lib.GetRemoteHostname(ip)
 	if err != nil {
 		return err
 	}
 
-	if err := DB.Table("user").Where("name=?", name).First(&user).Error; err == gorm.RecordNotFound {
+	if err := models.DB.Table("user").Where("name=?", name).First(&user).Error; err == gorm.ErrRecordNotFound {
 		return fmt.Errorf("User %v not found!", name)
 	}
 
@@ -34,7 +37,7 @@ func (h *Handler) LoginByUsernameAndPassword(c ssh.ConnMetadata, password string
 		h.IP = ip
 		h.Hostname = hostname
 		h.CurrentUser.LastSeenOnline = time.Now()
-		mesg := Message{
+		mesg := models.Message{
 			IP:        h.IP,
 			Hostname:  h.Hostname,
 			UserID:    h.CurrentUser.ID,
@@ -43,18 +46,18 @@ func (h *Handler) LoginByUsernameAndPassword(c ssh.ConnMetadata, password string
 			UpdatedAt: time.Now(),
 		}
 		h.Broadcast(&mesg, true, false)
-		session := Session{
+		session := models.Session{
 			UserID:    user.ID,
 			IP:        ip,
 			Hostname:  hostname,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
-		err = DB.Table("session").Save(&session).Error
+		err = models.DB.Table("session").Save(&session).Error
 		if err != nil {
 			return err
 		}
-		return DB.Table("user").Save(&user).Error
+		return models.DB.Table("user").Save(&user).Error
 	}
 	return fmt.Errorf("Wrong password for user %v!", name)
 }
@@ -62,23 +65,23 @@ func (h *Handler) LoginByUsernameAndPassword(c ssh.ConnMetadata, password string
 // LoginByPublicKey is a authorization callback for ssh config
 // see http://godoc.org/golang.org/x/crypto/ssh#ServerConfig for details
 func (h *Handler) LoginByPublicKey(c ssh.ConnMetadata, publicKey string) error {
-	key := Key{}
-	user := User{}
+	key := models.Key{}
+	user := models.User{}
 	ip := strings.Split(c.RemoteAddr().String(), ":")[0]
-	hostname, err := GetRemoteHostname(ip)
+	hostname, err := lib.GetRemoteHostname(ip)
 	if err != nil {
 		return err
 	}
-	err = DB.Table("key").Where("content=?", publicKey).First(&key).Error
+	err = models.DB.Table("key").Where("content=?", publicKey).First(&key).Error
 	if err != nil {
-		if err == gorm.RecordNotFound {
+		if err == gorm.ErrRecordNotFound {
 			return fmt.Errorf("Public key is not known!")
 		}
 		return err
 	}
-	err = DB.Table("user").Where("id=? AND name = ?", key.UserID, c.User()).First(&user).Error
+	err = models.DB.Table("user").Where("id=? AND name = ?", key.UserID, c.User()).First(&user).Error
 	if err != nil {
-		if err == gorm.RecordNotFound {
+		if err == gorm.ErrRecordNotFound {
 			return fmt.Errorf("User %v not found!", c.User())
 		}
 		return err
@@ -90,7 +93,7 @@ func (h *Handler) LoginByPublicKey(c ssh.ConnMetadata, publicKey string) error {
 	h.Hostname = hostname
 	h.CurrentUser.LastSeenOnline = time.Now()
 
-	mesg := Message{
+	mesg := models.Message{
 		//Id:        0,
 		IP:        h.IP,
 		Hostname:  h.Hostname,
@@ -101,18 +104,18 @@ func (h *Handler) LoginByPublicKey(c ssh.ConnMetadata, publicKey string) error {
 	}
 	h.Broadcast(&mesg, true, false)
 
-	session := Session{
+	session := models.Session{
 		UserID:    user.ID,
 		IP:        ip,
 		Hostname:  hostname,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
-	err = DB.Table("session").Save(&session).Error
+	err = models.DB.Table("session").Save(&session).Error
 	if err != nil {
 		return err
 	}
-	return DB.Table("user").Save(&user).Error
+	return models.DB.Table("user").Save(&user).Error
 }
 
 // MakeSSHConfig generates SSH server config used to authorize users
@@ -127,7 +130,7 @@ func (h *Handler) MakeSSHConfig() *ssh.ServerConfig {
 			k := string(ssh.MarshalAuthorizedKey(key))
 			//fmt.Printf("Public key is %v -- %v\n", key.Type(), k)
 			h.KeyFingerPrint = key
-			return nil, h.LoginByPublicKey(c, Hash(k))
+			return nil, h.LoginByPublicKey(c, models.Hash(k))
 		},
 		AuthLogCallback: func(c ssh.ConnMetadata, method string, err error) {
 			if err == nil {

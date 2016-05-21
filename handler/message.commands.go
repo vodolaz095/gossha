@@ -1,4 +1,4 @@
-package gossha
+package handler
 
 /*
  * User commands to process messages
@@ -8,10 +8,13 @@ import (
 	//"fmt"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/terminal"
+
 	"os"
 	"os/exec"
 	"strings"
 	"time"
+
+	"github.com/vodolaz095/gossha/models"
 )
 
 // SendMessage sends message from this user into chat. Message is saved into persistent datastorage.
@@ -25,7 +28,7 @@ func (h *Handler) SendMessage(connection ssh.Channel, term *terminal.Terminal, i
 		comment = input
 	}
 
-	mesg := Message{
+	mesg := models.Message{
 		IP:        h.IP,
 		Hostname:  h.Hostname,
 		UserID:    h.CurrentUser.ID,
@@ -33,7 +36,7 @@ func (h *Handler) SendMessage(connection ssh.Channel, term *terminal.Terminal, i
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
-	err := DB.Table("message").Create(&mesg).Error
+	err := models.DB.Table("message").Create(&mesg).Error
 	h.LastShownMessageID = mesg.ID
 	if err != nil {
 		return err
@@ -41,7 +44,7 @@ func (h *Handler) SendMessage(connection ssh.Channel, term *terminal.Terminal, i
 
 	h.CurrentUser.LastSeenOnline = time.Now()
 	h.Broadcast(&mesg, false, true)
-	err = DB.Table("user").Save(&h.CurrentUser).Error
+	err = models.DB.Table("user").Save(&h.CurrentUser).Error
 	if err != nil {
 		return err
 	}
@@ -97,7 +100,7 @@ func (h *Handler) SendPrivateMessage(connection ssh.Channel, term *terminal.Term
 	for _, v := range Board {
 		if v.CurrentUser.Name == name {
 			to = v.CurrentUser.Name
-			mesg := Message{
+			mesg := models.Message{
 				IP:        h.IP,
 				Hostname:  h.Hostname,
 				UserID:    h.CurrentUser.ID,
@@ -106,7 +109,7 @@ func (h *Handler) SendPrivateMessage(connection ssh.Channel, term *terminal.Term
 				UpdatedAt: time.Now(),
 			}
 			//reciever can  see private messages he sends
-			v.Nerve <- Notification{
+			v.Nerve <- models.Notification{
 				User:             h.CurrentUser,
 				Message:          mesg,
 				IsSystem:         false,
@@ -114,7 +117,7 @@ func (h *Handler) SendPrivateMessage(connection ssh.Channel, term *terminal.Term
 				IsPrivateMessage: true,
 			}
 			//also author can see private messages he/she sends
-			h.Nerve <- Notification{
+			h.Nerve <- models.Notification{
 				User:             h.CurrentUser,
 				Message:          mesg,
 				IsSystem:         false,
@@ -173,7 +176,7 @@ func (h *Handler) SendPrivateMessage(connection ssh.Channel, term *terminal.Term
 
 // Broadcast sends Message in form of Notification
 // to all other Handler's, each of thems corresponding authorized User.
-func (h *Handler) Broadcast(mesg *Message, isSystem, isChat bool) {
+func (h *Handler) Broadcast(mesg *models.Message, isSystem, isChat bool) {
 	for k, v := range Board {
 		if k != h.SessionID {
 			v.Nerve <- Notification{
@@ -189,7 +192,7 @@ func (h *Handler) Broadcast(mesg *Message, isSystem, isChat bool) {
 
 // PrivateMessage sends Message in form of Notification to all handlers, which have the
 // Handler.CurrentUser.Name equal to first argument
-func (h *Handler) PrivateMessage(name string, mesg *Message) {
+func (h *Handler) PrivateMessage(name string, mesg *models.Message) {
 	for k, v := range Board {
 		if k != h.SessionID {
 			if h.CurrentUser.Name == name {
@@ -200,8 +203,8 @@ func (h *Handler) PrivateMessage(name string, mesg *Message) {
 }
 
 // GetMessages outputs recent messages in form of Notification array
-func (h *Handler) GetMessages(limit int) ([]Notification, error) {
-	var ret []Notification
+func (h *Handler) GetMessages(limit int) ([]models.Notification, error) {
+	var ret []models.Notification
 	var messages []Message
 	var l int64
 	err := DB.Table("message").Preload("User").Where("message.id > ?", h.LastShownMessageID).Limit(limit).Order("message.id asc").Find(&messages).Error

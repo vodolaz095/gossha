@@ -1,14 +1,16 @@
-package gossha
+package handler
 
 import (
 	"bufio"
 	"fmt"
-	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"time"
+
+	"github.com/vodolaz095/gossha/models"
+	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 // ExecCommand executes custom user scripts from home directory. It checks, if
@@ -17,7 +19,7 @@ import (
 func (h *Handler) ExecCommand(connection ssh.Channel, term *terminal.Terminal, input []string) error {
 	if len(input) == 2 {
 		cmd := input[1]
-		mesg := Message{
+		mesg := models.Message{
 			IP:        h.IP,
 			Hostname:  h.Hostname,
 			UserID:    h.CurrentUser.ID,

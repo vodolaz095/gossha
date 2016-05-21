@@ -1,4 +1,4 @@
-package gossha
+package handler
 
 /*
  * Commands related to users
@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/vodolaz095/gossha/models"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -17,7 +18,7 @@ import (
 // Handler is removed from Board in `ssh.go` file
 func (h *Handler) Leave(connection ssh.Channel, term *terminal.Terminal, args []string) error {
 	//delete(Board, h.SessionId)
-	mesg := Message{
+	mesg := models.Message{
 		//Id:        0,
 		IP:        h.IP,
 		Hostname:  h.Hostname,
@@ -76,7 +77,7 @@ func (h *Handler) SignUpUser(connection ssh.Channel, term *terminal.Terminal, ar
 		case 3:
 			name := args[1]
 			password := args[2]
-			return CreateUser(name, password, false)
+			return models.CreateUser(name, password, false)
 
 		case 2:
 			name := args[1]
@@ -84,7 +85,7 @@ func (h *Handler) SignUpUser(connection ssh.Channel, term *terminal.Terminal, ar
 			if err != nil {
 				return err
 			}
-			return CreateUser(name, password, false)
+			return models.CreateUser(name, password, false)
 
 		default:
 			return fmt.Errorf("Try `\\r someUserName [newPassword]` to sign up or change password for somebody!")
@@ -101,7 +102,7 @@ func (h *Handler) SignUpRoot(connection ssh.Channel, term *terminal.Terminal, ar
 		case 3:
 			name := args[1]
 			password := args[2]
-			return CreateUser(name, password, true)
+			return models.CreateUser(name, password, true)
 
 		case 2:
 			name := args[1]
@@ -109,7 +110,7 @@ func (h *Handler) SignUpRoot(connection ssh.Channel, term *terminal.Terminal, ar
 			if err != nil {
 				return err
 			}
-			return CreateUser(name, password, true)
+			return models.CreateUser(name, password, true)
 
 		default:
 			return fmt.Errorf("Try `\\rr someUserName [newPassword]` to sign up or change password for somebody with root permissions!")
@@ -124,7 +125,7 @@ func (h *Handler) Ban(connection ssh.Channel, term *terminal.Terminal, args []st
 		if len(args) == 2 {
 			name := args[1]
 			term.Write([]byte("Trying to ban " + name + "!\n\r"))
-			return BanUser(name)
+			return models.BanUser(name)
 		}
 		return fmt.Errorf("Name is empty, try `\\b someUserName`!")
 	}

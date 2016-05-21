@@ -1,4 +1,4 @@
-package gossha
+package lib
 
 /*
  * Assorted functions, that do not deserve to be a member of any struct

@@ -1,4 +1,4 @@
-package gossha
+package models
 
 import (
 	"crypto/sha256"

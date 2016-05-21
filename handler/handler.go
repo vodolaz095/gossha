@@ -1,14 +1,21 @@
-package gossha
+package handler
 
 import (
 	"fmt"
-	//	"github.com/jinzhu/gorm"
-	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
 	//	"reflect"
 	"sort"
 	"strings"
+
+	//	"github.com/jinzhu/gorm"
+	"github.com/vodolaz095/gossha/lib"
+	"github.com/vodolaz095/gossha/models"
+	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/terminal"
 )
+
+// Board is a map of Handler's, with SessionId's as keys -
+// http://godoc.org/golang.org/x/crypto/ssh#ConnMetadata
+var Board map[string]*Handler
 
 //KnownCommand includes command known to Handler and it's short description
 type KnownCommand struct {
@@ -23,14 +30,14 @@ type Handler struct {
 	IP                 string
 	Hostname           string
 	LastShownMessageID int64
-	CurrentUser        User
-	Nerve              chan Notification
+	CurrentUser        models.User
+	Nerve              chan models.Notification
 	KnownCommands      map[string]KnownCommand
 }
 
 // New creates new Handler, representing users session
 func New() Handler {
-	n := make(chan Notification, 100)
+	n := make(chan models.Notification, 100)
 	h := Handler{Nerve: n}
 	h.KnownCommands = make(map[string]KnownCommand)
 	h.addKnownCommand("h", "PrintHelpForUser", "(H)elp, show this screen")
@@ -102,8 +109,8 @@ func (h *Handler) AutoCompleteCallback(s string, pos int, r rune) (string, int, 
 				n := strings.TrimLeft(s, "@")
 				if len(n) >= 1 {
 					namePart := fmt.Sprint(n, "%")
-					var user User
-					err := DB.Table("user").Where("name LIKE ?", namePart).First(&user).Error
+					var user models.User
+					err := models.DB.Table("user").Where("name LIKE ?", namePart).First(&user).Error
 					//					fmt.Println("Looks like name!")
 					if err == nil {
 						return fmt.Sprintf("@%v", user.Name), (1 + len(user.Name)), true
@@ -128,7 +135,7 @@ func (h *Handler) ProcessCommand(connection ssh.Channel, term *terminal.Terminal
 			f, ok := h.KnownCommands[a[0]]
 			if ok {
 				go func() { //todo not sure about it, need more tests
-					err := Invoke(h, f.Command, connection, term, a)
+					err := lib.Invoke(h, f.Command, connection, term, a)
 					if err != nil {
 						term.Write([]byte(fmt.Sprintf("Error - %v\n\r", err.Error())))
 					}
