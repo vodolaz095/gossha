@@ -10,8 +10,6 @@ import (
 
 	"github.com/vodolaz095/gossha/config"
 	"github.com/vodolaz095/gossha/models"
-	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 var sep = string(os.PathSeparator)
@@ -19,7 +17,7 @@ var sep = string(os.PathSeparator)
 // ExecCommand executes custom user scripts from home directory. It checks, if
 //the script file is executable, and than it executes it, setting the environment
 // parameters with this values:
-func (h *Handler) ExecCommand(connection ssh.Channel, term *terminal.Terminal, input []string) error {
+func (h *Handler) ExecCommand(input []string) error {
 	if len(input) == 2 {
 		cmd := input[1]
 		mesg := models.Message{
@@ -72,16 +70,16 @@ func (h *Handler) ExecCommand(connection ssh.Channel, term *terminal.Terminal, i
 			if err != nil {
 				return err
 			}
-			term.Write([]byte(fmt.Sprintf("Executing command '%v':\r\n\r\n", cmd)))
+			h.writeToUser("Executing command '%v':", cmd)
 			chld := exec.Command(scriptPath)
 			out, err := chld.StdoutPipe()
 			chld.Start()
 			defer func() {
 				s := chld.Wait() // Doesn't block
 				if s != nil {
-					term.Write([]byte(fmt.Sprintf("\r\nCommand '%v' failed with status code %v!!!\r\n", cmd, s)))
+					h.writeToUser("Command '%v' failed with status code %v!!!", cmd, s)
 				} else {
-					term.Write([]byte(fmt.Sprintf("\r\nCommand '%v' executed properly!!!\r\n", cmd)))
+					h.writeToUser("Command '%v' executed properly!!!", cmd)
 				}
 
 			}()
@@ -91,7 +89,7 @@ func (h *Handler) ExecCommand(connection ssh.Channel, term *terminal.Terminal, i
 			scn := bufio.NewScanner(out)
 
 			for scn.Scan() {
-				term.Write([]byte(fmt.Sprintf("%v\r\n", scn.Text())))
+				h.writeToUser("%v", scn.Text())
 			}
 			if err := scn.Err(); err != nil {
 				return err
@@ -109,10 +107,10 @@ func (h *Handler) ExecCommand(connection ssh.Channel, term *terminal.Terminal, i
 	if err != nil {
 		return err
 	}
-	term.Write([]byte(fmt.Sprintf("Commands avaible:\r\n")))
+	h.writeToUser("Commands avaible:")
 	for _, v := range files {
 		if v.Mode().Perm()&0111 != 0 {
-			term.Write([]byte(fmt.Sprintf("  %v\r\n", v.Name())))
+			h.writeToUser("  %v", v.Name())
 		}
 	}
 	return nil

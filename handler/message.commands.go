@@ -5,9 +5,7 @@ package handler
  */
 
 import (
-	//"fmt"
-	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
+	//	"fmt"
 
 	"os"
 	"os/exec"
@@ -20,7 +18,7 @@ import (
 
 // SendMessage sends message from this user into chat. Message is saved into persistent datastorage.
 // Also the command from `RuntimeConfig.ExecuteOnMessage` is executed if present
-func (h *Handler) SendMessage(connection ssh.Channel, term *terminal.Terminal, input string) error {
+func (h *Handler) SendMessage(input string) error {
 	//authorized
 	var comment string
 	if len(input) > 255 {
@@ -90,7 +88,7 @@ func (h *Handler) SendMessage(connection ssh.Channel, term *terminal.Terminal, i
 
 //SendPrivateMessage delivers message to the reciever only, message is not saved into persistent datastorage
 // Also the command from `RuntimeConfig.ExecuteOnPrivateMessage` is executed if present
-func (h *Handler) SendPrivateMessage(connection ssh.Channel, term *terminal.Terminal, input string) error {
+func (h *Handler) SendPrivateMessage(input string) error {
 	if string(input[0]) != "@" {
 		return nil
 	}
@@ -129,7 +127,7 @@ func (h *Handler) SendPrivateMessage(connection ssh.Channel, term *terminal.Term
 		}
 	}
 	if !messageSend {
-		term.Write([]byte("Unable to send private message, user is offline!"))
+		h.writeToUser("Unable to send private message, user is offline!")
 	}
 	if config.RuntimeConfig.ExecuteOnPrivateMessage != "" {
 		err := os.Setenv("GOSSHA_USERNAME", h.CurrentUser.Name)
@@ -156,6 +154,13 @@ func (h *Handler) SendPrivateMessage(connection ssh.Channel, term *terminal.Term
 			}
 		} else {
 			err = os.Setenv("GOSSHA_ROOT", "false")
+			if err != nil {
+				return err
+			}
+		}
+
+		if messageSend {
+			err = os.Setenv("GOSSHA_RECIEVER_ONLINE", "true")
 			if err != nil {
 				return err
 			}

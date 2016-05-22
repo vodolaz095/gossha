@@ -10,7 +10,7 @@ import (
 
 	"github.com/vodolaz095/gossha/models"
 	//	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
+	//	"golang.org/x/crypto/ssh/terminal"
 )
 
 // PrintPrompt makes promt for current user
@@ -30,26 +30,20 @@ func (h *Handler) PrintMessage(m *models.Message, u *models.User) string {
 }
 
 // PrintNotification pretty prints the Notification recieved by Nerve into terminal given
-func (h *Handler) PrintNotification(n *models.Notification, term *terminal.Terminal) error {
-	msg := []byte(h.PrintMessage(&n.Message, &n.User))
-	if n.IsChat {
-		_, err := term.Write(term.Escape.White)
-		_, err = term.Write(msg)
-		_, err = term.Write(term.Escape.Reset)
-		return err
-	}
-	if n.IsSystem {
-		_, err := term.Write(term.Escape.Green)
-		_, err = term.Write(msg)
-		_, err = term.Write(term.Escape.Reset)
-		return err
-	}
-	if n.IsPrivateMessage {
-		_, err := term.Write(term.Escape.Cyan)
-		_, err = term.Write(msg)
-		_, err = term.Write(term.Escape.Reset)
-		return err
-	}
-	_, err := term.Write(msg)
+func (h *Handler) PrintNotification(n *models.Notification) error {
+	msg := h.PrintMessage(&n.Message, &n.User)
+	//	if n.IsChat {
+	//		_, err := h.writeToUser("%s%s%s", string(terminal.EscapeCodes.White), msg, string(terminal.EscapeCodes.Reset))
+	//		return err
+	//	}
+	//	if n.IsSystem {
+	//		_, err := h.writeToUser("%s%s%s", string(terminal.EscapeCodes.Green), msg, string(terminal.EscapeCodes.Reset))
+	//		return err
+	//	}
+	//	if n.IsPrivateMessage {
+	//		_, err := h.writeToUser("%s%s%s", string(terminal.EscapeCodes.Cyan), msg, string(terminal.EscapeCodes.Reset))
+	//		return err
+	//	}
+	_, err := h.writeToUser(msg)
 	return err
 }
