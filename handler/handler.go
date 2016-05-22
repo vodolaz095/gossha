@@ -10,8 +10,18 @@ import (
 	"github.com/vodolaz095/gossha/lib"
 	"github.com/vodolaz095/gossha/models"
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
 )
+
+//TerminalInterface is interface repserenting terminal
+type TerminalInterface interface {
+	ReadPassword(prompt string) (line string, err error)
+	Write([]byte) (numberOfBytesWritten int, err error)
+}
+
+//SSHChannelInterface is interface representing SSH channel session
+type SSHChannelInterface interface {
+	Close() error
+}
 
 // Board is a map of Handler's, with SessionId's as keys -
 // http://godoc.org/golang.org/x/crypto/ssh#ConnMetadata
@@ -33,6 +43,8 @@ type Handler struct {
 	CurrentUser        models.User
 	Nerve              chan models.Notification
 	KnownCommands      map[string]KnownCommand
+	Term               TerminalInterface
+	Connection         SSHChannelInterface
 }
 
 //see for inspiration
@@ -60,29 +72,33 @@ func New() Handler {
 	return h
 }
 
+func (h *Handler) writeToUser(format string, a ...interface{}) (bytesWriten int, err error) {
+	return fmt.Fprintf(h.Term, format+"\n\r", a...)
+}
+
 func (h *Handler) addKnownCommand(key, commandName, help string) {
 	h.KnownCommands[key] = KnownCommand{commandName, help}
 }
 
 // PrintHelpForUser outputs help for current user
-func (h *Handler) PrintHelpForUser(connection ssh.Channel, term *terminal.Terminal, command []string) error {
-	var cmds []string
-	cmds = append(cmds, "GoSSHa - SSH powered chat. See https://github.com/vodolaz095/gossha for details...\n\r")
-	//	cmds = append(cmds, fmt.Sprintf("Build #%v \n\r", VERSION))
-	//	cmds = append(cmds, fmt.Sprintf("Version: %v \n\r", SUBVERSION))
-	cmds = append(cmds, fmt.Sprintf("Commands available:\n\r"))
+func (h *Handler) PrintHelpForUser(command []string) error {
+
+	h.writeToUser("GoSSHa - SSH powered chat. See https://github.com/vodolaz095/gossha for details...")
+	//	h.writeToUser("Build #%v", VERSION)
+	//	h.writeToUser("Version: %v", SUBVERSION)
+	h.writeToUser("Commands available:")
+
 	var keys []string
 	for k, v := range h.KnownCommands {
-		keys = append(keys, fmt.Sprintf(" \\%v - %v\n\r", k, v.Description))
+		keys = append(keys, fmt.Sprintf(" \\%v - %v", k, v.Description))
 	}
 	sort.Strings(keys)
 	for _, kk := range keys {
-		cmds = append(cmds, kk)
+		h.writeToUser(kk)
 	}
-	cmds = append(cmds, " all other input is treated as message, that you send to server\n\r")
-	cmds = append(cmds, " \n\r")
-	cmds = append(cmds, " \n\r")
-	term.Write([]byte(strings.Join(cmds, "")))
+	h.writeToUser(" all other input is treated as message, that you send to server.")
+	h.writeToUser("")
+	h.writeToUser("")
 	return nil
 }
 
@@ -129,7 +145,7 @@ func (h *Handler) AutoCompleteCallback(s string, pos int, r rune) (string, int, 
 }
 
 // ProcessCommand reads commands from terminal and processes them
-func (h *Handler) ProcessCommand(connection ssh.Channel, term *terminal.Terminal, command string) {
+func (h *Handler) ProcessCommand(command string) {
 	tokens := strings.Split(command, "")
 	if len(tokens) > 0 {
 		switch tokens[0] {
@@ -138,22 +154,22 @@ func (h *Handler) ProcessCommand(connection ssh.Channel, term *terminal.Terminal
 			f, ok := h.KnownCommands[a[0]]
 			if ok {
 				go func() { //todo not sure about it, need more tests
-					err := lib.Invoke(h, f.Command, connection, term, a)
+					err := lib.Invoke(h, f.Command, a)
 					if err != nil {
-						term.Write([]byte(fmt.Sprintf("Error - %v\n\r", err.Error())))
+						h.writeToUser("Error executing %v - %v", f.Command, err.Error())
 					}
 				}()
 			} else {
-				h.PrintHelpForUser(connection, term, a)
+				h.PrintHelpForUser(a)
 			}
 			break
 		case "@":
-			h.SendPrivateMessage(connection, term, command)
+			h.SendPrivateMessage(command)
 			break
 		default:
-			err := h.SendMessage(connection, term, command)
+			err := h.SendMessage(command)
 			if err != nil {
-				term.Write([]byte(fmt.Sprintf("Error - %v\n\r", err.Error())))
+				h.writeToUser("Error sending message - %v", err.Error())
 			}
 		}
 	}

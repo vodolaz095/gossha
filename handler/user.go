@@ -6,18 +6,14 @@ package handler
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/vodolaz095/gossha/models"
-	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 // Leave notifies, that user has gone and close connection
 // Handler is removed from Board in `ssh.go` file
-func (h *Handler) Leave(connection ssh.Channel, term *terminal.Terminal, args []string) error {
-	//delete(Board, h.SessionId)
+func (h *Handler) Leave(args []string) error {
 	mesg := models.Message{
 		//Id:        0,
 		IP:        h.IP,
@@ -28,32 +24,34 @@ func (h *Handler) Leave(connection ssh.Channel, term *terminal.Terminal, args []
 		UpdatedAt: time.Now(),
 	}
 	h.Broadcast(&mesg, true, false)
-	term.Write([]byte("Goodbye!\n\r"))
-	connection.Close()
-	return nil
+	h.writeToUser("Goodbye!")
+	return h.Connection.Close()
 }
 
 // Who lists the current active users
-func (h *Handler) Who(connection ssh.Channel, term *terminal.Terminal, args []string) error {
-	var cmds []string
-	cmds = append(cmds, "Active sessions:\n\r")
+func (h *Handler) Who(args []string) error {
+	h.writeToUser("Active sessions:")
 	k := 0
 	for _, v := range Board {
 		k++
-		cmds = append(cmds, fmt.Sprintf("%v) [%v@%v(%v) %v] {%v} ", k, v.CurrentUser.Name, v.Hostname, v.IP, v.CurrentUser.IsOnline(), v.CurrentUser.LastSeenOnline.Format("15:04:05")))
+		if v.CurrentUser.Name != "" {
+			h.writeToUser("%d) [%s@%s [%s] %t] {%s} ",
+				k, v.CurrentUser.Name, v.Hostname, v.IP, v.CurrentUser.IsOnline(), v.CurrentUser.LastSeenOnline.Format("15:04:05"),
+			)
+		}
+
 	}
-	cmds = append(cmds, "\n\r\n\r")
-	term.Write([]byte(strings.Join(cmds, "")))
+	h.writeToUser("")
+	h.writeToUser("")
 	return nil
 }
 
 // Info prints additional information about yourself
-func (h *Handler) Info(connection ssh.Channel, term *terminal.Terminal, args []string) error {
-	var cmds []string
+func (h *Handler) Info(args []string) error {
 	var sessions []models.Session
 
-	cmds = append(cmds, fmt.Sprintf("You are %v, logged from %v with IP of %v\n\r", h.CurrentUser.Name, h.Hostname, h.IP))
-	cmds = append(cmds, "Your previous sessions: \n\r")
+	h.writeToUser("You are %v, logged from %v with IP of %v.", h.CurrentUser.Name, h.Hostname, h.IP)
+	h.writeToUser("Your previous sessions: ")
 
 	err := models.DB.Table("session").Find(&sessions).Where("userId=?", h.CurrentUser.ID).Error
 	if err != nil {
@@ -62,15 +60,14 @@ func (h *Handler) Info(connection ssh.Channel, term *terminal.Terminal, args []s
 	k := 0
 	for _, v := range sessions {
 		k++
-		cmds = append(cmds, fmt.Sprintf("%v) %v(%v) since %v \n\r", k, v.Hostname, v.IP, v.CreatedAt.Format("15:04:05")))
+		h.writeToUser("%v) %v(%v) since %v \n\r", k, v.Hostname, v.IP, v.CreatedAt.Format("15:04:05"))
 	}
-	cmds = append(cmds, " \n\r")
-	term.Write([]byte(strings.Join(cmds, "")))
+	h.writeToUser("")
 	return nil
 }
 
 // SignUpUser creates new user account, it requires root permissions
-func (h *Handler) SignUpUser(connection ssh.Channel, term *terminal.Terminal, args []string) error {
+func (h *Handler) SignUpUser(args []string) error {
 	if h.CurrentUser.Root {
 		//fmt.Println(args)
 		switch len(args) {
@@ -81,7 +78,7 @@ func (h *Handler) SignUpUser(connection ssh.Channel, term *terminal.Terminal, ar
 
 		case 2:
 			name := args[1]
-			password, err := term.ReadPassword(fmt.Sprintf("Enter password for user `%s`>", name))
+			password, err := h.Term.ReadPassword(fmt.Sprintf("Enter password for user `%s`>", name))
 			if err != nil {
 				return err
 			}
@@ -95,7 +92,7 @@ func (h *Handler) SignUpUser(connection ssh.Channel, term *terminal.Terminal, ar
 }
 
 // SignUpRoot creates new user account, it requires root permissions
-func (h *Handler) SignUpRoot(connection ssh.Channel, term *terminal.Terminal, args []string) error {
+func (h *Handler) SignUpRoot(args []string) error {
 	if h.CurrentUser.Root {
 		//fmt.Println(args)
 		switch len(args) {
@@ -106,7 +103,7 @@ func (h *Handler) SignUpRoot(connection ssh.Channel, term *terminal.Terminal, ar
 
 		case 2:
 			name := args[1]
-			password, err := term.ReadPassword(fmt.Sprintf("Enter password for user `%s`>", name))
+			password, err := h.Term.ReadPassword(fmt.Sprintf("Enter password for root `%s`>", name))
 			if err != nil {
 				return err
 			}
@@ -120,11 +117,11 @@ func (h *Handler) SignUpRoot(connection ssh.Channel, term *terminal.Terminal, ar
 }
 
 // Ban blocks user account, that is extracted from args, it requires root permissions
-func (h *Handler) Ban(connection ssh.Channel, term *terminal.Terminal, args []string) error {
+func (h *Handler) Ban(args []string) error {
 	if h.CurrentUser.Root {
 		if len(args) == 2 {
 			name := args[1]
-			term.Write([]byte("Trying to ban " + name + "!\n\r"))
+			h.writeToUser("Trying to ban %s!", name)
 			return models.BanUser(name)
 		}
 		return fmt.Errorf("Name is empty, try `\\b someUserName`!")
@@ -133,23 +130,23 @@ func (h *Handler) Ban(connection ssh.Channel, term *terminal.Terminal, args []st
 }
 
 // ChangePassword sets the new password for current user
-func (h *Handler) ChangePassword(connection ssh.Channel, term *terminal.Terminal, args []string) error {
-	old, err := term.ReadPassword("Enter your old password:")
+func (h *Handler) ChangePassword(args []string) error {
+	old, err := h.Term.ReadPassword("Enter your old password:")
 	if err != nil {
 		return err
 	}
 	if h.CurrentUser.CheckPassword(old) {
-		new1, err := term.ReadPassword("Enter your new password:")
+		new1, err := h.Term.ReadPassword("Enter your new password:")
 		if err != nil {
 			return err
 		}
-		new2, err := term.ReadPassword("Repeat your new password:")
+		new2, err := h.Term.ReadPassword("Repeat your new password:")
 		if err != nil {
 			return err
 		}
 		if new1 == new2 {
 			if len(new1) > 0 {
-				term.Write([]byte("Setting new password...\r\n"))
+				h.writeToUser("Setting new password...")
 				return h.CurrentUser.SetPassword(new1)
 			}
 			return fmt.Errorf("Unable to use empty password!")

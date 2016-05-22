@@ -127,32 +127,34 @@ func handleChannel(newChannel ssh.NewChannel, h *handler.Handler) {
 	handler.Board[h.SessionID] = h
 	term := terminal.NewTerminal(connection, h.PrintPrompt())
 	term.AutoCompleteCallback = h.AutoCompleteCallback
-	h.PrintHelpForUser(connection, term, []string{})
+	h.Term = term
+	h.Connection = connection
+	h.PrintHelpForUser([]string{})
 	msgs, err := h.GetMessages(100)
 	if err != nil {
 		panic(err)
 	}
 	for _, v := range msgs {
-		h.PrintNotification(&v, term)
+		h.PrintNotification(&v)
 	}
 	go func() {
 		for {
 			n1 := <-h.Nerve
-			h.PrintNotification(&n1, term)
+			h.PrintNotification(&n1)
 		}
 	}()
 	go func() {
 		defer func() {
 			connection.Close()
 			delete(handler.Board, h.SessionID)
-			h.Leave(connection, term, []string{})
+			h.Leave([]string{})
 		}()
 		for {
 			line, err := term.ReadLine()
 			if err != nil {
 				break
 			}
-			h.ProcessCommand(connection, term, line)
+			h.ProcessCommand(line)
 		}
 	}()
 }
