@@ -4,6 +4,8 @@ import (
 	"net"
 	//	"os"
 	"testing"
+
+	"github.com/vodolaz095/gossha/models"
 )
 
 type connFakeAddr struct{}
@@ -37,11 +39,11 @@ func (c connMetadataFake) RemoteAddr() net.Addr {
 }
 
 func TestSqlite3InitDatabase(t *testing.T) {
-	err := InitDatabase("sqlite3", ":memory:")
+	err := models.InitDatabase("sqlite3", ":memory:", true)
 	if err != nil {
 		t.Error(err.Error())
 	}
-	err = CreateUser("testUser", "testPassword", false)
+	err = models.CreateUser("testUser", "testPassword", false)
 	if err != nil {
 		t.Error(err.Error())
 	}
