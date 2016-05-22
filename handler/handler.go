@@ -12,11 +12,13 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
+//TerminalInterface is interface repserenting terminal
 type TerminalInterface interface {
 	ReadPassword(prompt string) (line string, err error)
 	Write([]byte) (numberOfBytesWritten int, err error)
 }
 
+//SSHChannelInterface is interface representing SSH channel session
 type SSHChannelInterface interface {
 	Close() error
 }
@@ -68,12 +70,7 @@ func New() Handler {
 }
 
 func (h *Handler) writeToUser(format string, a ...interface{}) (bytesWriten int, err error) {
-	if a != nil {
-		return fmt.Fprintf(h.Term, fmt.Sprintf("%s\n\r", format), a)
-	}
-
-	return fmt.Fprint(h.Term, fmt.Sprintf("%s\n\r", format))
-
+	return fmt.Fprintf(h.Term, format+"\n\r", a...)
 }
 
 func (h *Handler) addKnownCommand(key, commandName, help string) {

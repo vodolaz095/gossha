@@ -34,7 +34,12 @@ func (h *Handler) Who(args []string) error {
 	k := 0
 	for _, v := range Board {
 		k++
-		h.writeToUser("%v) [%v@%v(%v) %v] {%v} ", k, v.CurrentUser.Name, v.Hostname, v.IP, v.CurrentUser.IsOnline(), v.CurrentUser.LastSeenOnline.Format("15:04:05"))
+		if v.CurrentUser.Name != "" {
+			h.writeToUser("%d) [%s@%s [%s] %t] {%s} ",
+				k, v.CurrentUser.Name, v.Hostname, v.IP, v.CurrentUser.IsOnline(), v.CurrentUser.LastSeenOnline.Format("15:04:05"),
+			)
+		}
+
 	}
 	h.writeToUser("")
 	h.writeToUser("")
