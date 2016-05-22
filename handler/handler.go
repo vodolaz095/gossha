@@ -35,6 +35,9 @@ type Handler struct {
 	KnownCommands      map[string]KnownCommand
 }
 
+//see for inspiration
+//https://play.golang.org/p/wNuwVJM6v
+
 // New creates new Handler, representing users session
 func New() Handler {
 	n := make(chan models.Notification, 100)
