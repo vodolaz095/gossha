@@ -68,7 +68,12 @@ func New() Handler {
 }
 
 func (h *Handler) writeToUser(format string, a ...interface{}) (bytesWriten int, err error) {
-	return fmt.Fprintf(h.Term, fmt.Sprintf("%s\n\r", format), a)
+	if a != nil {
+		return fmt.Fprintf(h.Term, fmt.Sprintf("%s\n\r", format), a)
+	}
+
+	return fmt.Fprint(h.Term, fmt.Sprintf("%s\n\r", format))
+
 }
 
 func (h *Handler) addKnownCommand(key, commandName, help string) {
