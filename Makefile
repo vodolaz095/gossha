@@ -24,14 +24,15 @@ deps:
 	go get -u github.com/tools/godep
 	go get -u github.com/golang/lint/golint
 	go get -v .
-	godep restore -v
+#	godep restore -v
 
 check: deps
 	gofmt  -w=true -s=true -l=true ./..
 	golint ./...
 	go vet
-	godep go test -v
+	go test -v ./...
 
+test: check
 
 build: clean engrave deps check
 	godep go build -o "build/gossha" app/gossha.go
