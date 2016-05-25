@@ -62,24 +62,7 @@ func connect(username, password string, port int) (ssh.Session, error) {
 	if err != nil {
 		return ssh.Session{}, err
 	}
-	defer session.Close()
-
-	// Set up terminal modes
-	modes := ssh.TerminalModes{
-		ssh.ECHO:          0,     // disable echoing
-		ssh.TTY_OP_ISPEED: 14400, // input speed = 14.4kbaud
-		ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
-	}
-	// Request pseudo terminal
-	if err := session.RequestPty("xterm", 80, 40, modes); err != nil {
-		return *session, fmt.Errorf("request for pseudo terminal failed: %s", err)
-	}
-
-	// Start remote shell
-	if err := session.Shell(); err != nil {
-		return *session, fmt.Errorf("failed to start shell: %s", err)
-	}
-	return *session, nil
+	return *session, err
 }
 
 func TestSpawnServer(t *testing.T) {
@@ -88,55 +71,62 @@ func TestSpawnServer(t *testing.T) {
 		t.Error("Error spawning! -", err.Error())
 	}
 	t.Parallel()
-	err = StartSSHD("127.0.0.1:3396")
+	go func() {
+		err = StartSSHD("127.0.0.1:3396")
+		if err != nil {
+			t.Error("Error spawning! -", err.Error())
+		}
+	}()
+}
+
+func TestAuthorizeViaGoodPasswordForUser1(t *testing.T) {
+	t.Parallel()
+	time.Sleep(100 * time.Millisecond)
+	session, err := connect("a", "a", 3396)
 	if err != nil {
-		t.Error("Error spawning! -", err.Error())
+		t.Errorf("Connection error %s", err)
+	}
+	err = session.Close()
+	if err != nil {
+		t.Errorf("Error closing session %s", err)
 	}
 }
 
-func TestAuthorizeViaGoodPassword(t *testing.T) {
+func TestAuthorizeViaGoodPasswordForUser2(t *testing.T) {
 	t.Parallel()
-	time.Sleep(time.Second)
-	session1, err := connect("a", "a", 3396)
-	defer session1.Close()
+	time.Sleep(100 * time.Millisecond)
+	session, err := connect("b", "b", 3396)
 	if err != nil {
-		t.Error("Connection error:", err.Error())
+		t.Errorf("Connection error %s", err)
 	}
-	session2, err := connect("b", "b", 3396)
-	defer session2.Close()
+	err = session.Close()
 	if err != nil {
-		t.Error("Connection error:", err.Error())
+		t.Errorf("Error closing session %s", err)
 	}
 }
 
 func TestAuthorizeViaBadPassword(t *testing.T) {
 	t.Parallel()
-	time.Sleep(time.Second)
+	time.Sleep(100 * time.Millisecond)
 	_, err := connect("a", "b", 3396)
 	if err != nil {
-		t.Error("gossha: We need to have error for authenticating with wrong password!")
+		if err.Error() != "ssh: handshake failed: ssh: unable to authenticate, attempted methods [none password], no supported methods remain" {
+			t.Errorf("gossha: Wrong error: %s", err)
+		}
 	} else {
-		t.Error(err)
+		t.Error("Error have to be thrown!")
 	}
 }
 
-//func TestQuiteCommand(t *testing.T) {
-//	session1, err := connect("a", "a", 3396)
-//	defer session1.Close()
-
-//	//todo it have to close the session
-//	_, err = session1.Stdout.Write([]byte("\\q\r"))
-//	//_, err = session1.Output("\\q\r")
-//	if err != nil {
-//		t.Error("Error sending command \\q! -", err.Error())
-//	}
-
-//	/*
-//		//todo it have to return the error!
-//		time.Sleep(100 * time.Millisecond)
-//		_, err = session1.Stdout.Write([]byte("\\q\r"))
-//		if err != nil {
-//			t.Error("Error sending command \\q! -", err.Error())
-//		}
-//	*/
-//}
+func TestSendMessage(t *testing.T) {
+	t.Parallel()
+	time.Sleep(100 * time.Millisecond)
+	session, err := connect("a", "a", 3396)
+	if err != nil {
+		t.Errorf("Connection error %s", err)
+	}
+	err = session.Start("some test message\r")
+	if err != nil {
+		t.Errorf("Sending message error %s", err)
+	}
+}
