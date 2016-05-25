@@ -110,6 +110,7 @@ ExecuteOnPrivateMessage="%s"
 	), nil
 }
 
+//RuntimeConfig is config being used now
 var RuntimeConfig *Config
 
 // GetHomeDir returns the current working directory of application,

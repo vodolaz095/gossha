@@ -110,7 +110,7 @@ func TestAuthorizeViaBadPassword(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 	_, err := connect("a", "b", 3396)
 	if err != nil {
-		if err.Error() != "ssh: handshake failed: ssh: unable to authenticate, attempted methods [none password], no supported methods remain" {
+		if err.Error() != "ssh: handshake failed: ssh: unable to authenticate, attempted methods [none password], no supported methods remain" || err.Error() != "ssh: handshake failed: ssh: unable to authenticate, attempted methods [none password], no supported methods remain" {
 			t.Errorf("gossha: Wrong error: %s", err)
 		}
 	} else {

@@ -44,7 +44,7 @@ func TestPrintMessage(t *testing.T) {
 
 type writerMock struct{}
 
-var contents string = ""
+var contents string
 
 func (w writerMock) ReadPassword(prompt string) (line string, err error) {
 	return "lalala", nil
