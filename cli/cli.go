@@ -14,6 +14,7 @@ import (
 	"github.com/vodolaz095/gossha/config"
 	"github.com/vodolaz095/gossha/models"
 	"github.com/vodolaz095/gossha/ssh"
+	"github.com/vodolaz095/gossha/version"
 )
 
 // Greet writes some motivating text alongside with application version
@@ -23,13 +24,11 @@ func Greet() string {
 	var ggg []string
 	ggg = append(ggg, "")
 	ggg = append(ggg, string(gg))
-	//	ggg = append(ggg, "GoSSHa is a cross-platform ssh-server based chat program, with data persisted into relational databases of MySQL, PostgreSQL or Sqlite3. Public channel (with persisted messages) and private message (not stored) are supported. Application has serious custom scripting and hacking potential.")
-	//	ggg = append(ggg, fmt.Sprintf("Build: %v", VERSION))
-	//	ggg = append(ggg, fmt.Sprintf("Version: %v", SUBVERSION))
+	ggg = append(ggg, "Cross-platform ssh-server based chat program.")
+	ggg = append(ggg, fmt.Sprintf("Build: %v", version.Version))
 	ggg = append(ggg, "Homepage: https://github.com/vodolaz095/gossha")
 	ggg = append(ggg, "Error reporting: https://github.com/vodolaz095/gossha/issues")
 	ggg = append(ggg, "API documentation: https://godoc.com/github.com/vodolaz095/gossha")
-	//	ggg = append(ggg, "           https://bitbucket.com/vodolaz095/gossha")
 	ggg = append(ggg, "           ")
 	return strings.Join(ggg, "\r\n")
 }
