@@ -47,6 +47,10 @@ dist: build_mysql_postgress_sqlite3
 	tar -czvf $(archiv).tar.gz  build/gossha README.md README_RU.md CHANGELOG.md homedir/ contrib/
 	tar -cjvf $(archiv).tar.bz2 build/gossha README.md README_RU.md CHANGELOG.md homedir/ contrib/
 
+docker: build_mysql_postgress_sqlite3 keys
+	systemctl start docker
+	docker build -t gossha .
+
 sign: dist
 	rm build/*.txt -f
 	rm build/*.txt.sig -f

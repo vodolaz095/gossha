@@ -25,11 +25,19 @@ EXPOSE 22
 # Set database connection string for SQLite database
 ENV GOSSHA_DRIVER=sqlite3
 #ENV GOSSHA_CONNECTIONSTRING=':memory:'
-ENV GOSSHA_CONNECTIONSTRING=/root/.gossha/gossha.db
-
+ENV GOSSHA_CONNECTIONSTRING=/var/lib/gossha/gossha.db
 
 # Create home directory
-ENV GOSSHA_HOMEDIR=/root/.gossha
+ENV GOSSHA_HOMEDIR=/var/lib/gossha
+
+RUN mkdir -p /var/lib/gossha/ssh
+# Inject SSHD server keys
+ADD build/id_rsa /var/lib/gossha/ssh/
+ENV GOSSHA_SSHPRIVATEKEYPATH /var/lib/gossha/ssh/id_rsa
+
+ADD build/id_rsa.pub /var/lib/gossha/ssh/
+ENV GOSSHA_SSHPUBLICKEYPATH /var/lib/gossha/ssh/id_rsa.pub
+
 
 # Inject code of your application
 ADD build/gossha /usr/bin/gossha
@@ -42,10 +50,6 @@ RUN /usr/bin/gossha passwd user1 user1
 
 # Create second ordinary user
 RUN /usr/bin/gossha passwd user2 user2
-
-# Inject SSHD server keys
-ADD build/id_rsa /root/.ssh/
-ADD build/id_rsa.pub /root/.ssh/
 
 # Run the image process. Point second argument to your entry point of application
 CMD ["/usr/bin/gossha"]
