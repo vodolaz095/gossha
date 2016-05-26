@@ -29,66 +29,66 @@ import (
 )
 
 var pluralInflections = [][]string{
-	[]string{"([a-z])$", "${1}s"},
-	[]string{"s$", "s"},
-	[]string{"^(ax|test)is$", "${1}es"},
-	[]string{"(octop|vir)us$", "${1}i"},
-	[]string{"(octop|vir)i$", "${1}i"},
-	[]string{"(alias|status)$", "${1}es"},
-	[]string{"(bu)s$", "${1}ses"},
-	[]string{"(buffal|tomat)o$", "${1}oes"},
-	[]string{"([ti])um$", "${1}a"},
-	[]string{"([ti])a$", "${1}a"},
-	[]string{"sis$", "ses"},
-	[]string{"(?:([^f])fe|([lr])f)$", "${1}${2}ves"},
-	[]string{"(hive)$", "${1}s"},
-	[]string{"([^aeiouy]|qu)y$", "${1}ies"},
-	[]string{"(x|ch|ss|sh)$", "${1}es"},
-	[]string{"(matr|vert|ind)(?:ix|ex)$", "${1}ices"},
-	[]string{"^(m|l)ouse$", "${1}ice"},
-	[]string{"^(m|l)ice$", "${1}ice"},
-	[]string{"^(ox)$", "${1}en"},
-	[]string{"^(oxen)$", "${1}"},
-	[]string{"(quiz)$", "${1}zes"},
+	{"([a-z])$", "${1}s"},
+	{"s$", "s"},
+	{"^(ax|test)is$", "${1}es"},
+	{"(octop|vir)us$", "${1}i"},
+	{"(octop|vir)i$", "${1}i"},
+	{"(alias|status)$", "${1}es"},
+	{"(bu)s$", "${1}ses"},
+	{"(buffal|tomat)o$", "${1}oes"},
+	{"([ti])um$", "${1}a"},
+	{"([ti])a$", "${1}a"},
+	{"sis$", "ses"},
+	{"(?:([^f])fe|([lr])f)$", "${1}${2}ves"},
+	{"(hive)$", "${1}s"},
+	{"([^aeiouy]|qu)y$", "${1}ies"},
+	{"(x|ch|ss|sh)$", "${1}es"},
+	{"(matr|vert|ind)(?:ix|ex)$", "${1}ices"},
+	{"^(m|l)ouse$", "${1}ice"},
+	{"^(m|l)ice$", "${1}ice"},
+	{"^(ox)$", "${1}en"},
+	{"^(oxen)$", "${1}"},
+	{"(quiz)$", "${1}zes"},
 }
 
 var singularInflections = [][]string{
-	[]string{"s$", ""},
-	[]string{"(ss)$", "${1}"},
-	[]string{"(n)ews$", "${1}ews"},
-	[]string{"([ti])a$", "${1}um"},
-	[]string{"((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)(sis|ses)$", "${1}sis"},
-	[]string{"(^analy)(sis|ses)$", "${1}sis"},
-	[]string{"([^f])ves$", "${1}fe"},
-	[]string{"(hive)s$", "${1}"},
-	[]string{"(tive)s$", "${1}"},
-	[]string{"([lr])ves$", "${1}f"},
-	[]string{"([^aeiouy]|qu)ies$", "${1}y"},
-	[]string{"(s)eries$", "${1}eries"},
-	[]string{"(m)ovies$", "${1}ovie"},
-	[]string{"(x|ch|ss|sh)es$", "${1}"},
-	[]string{"^(m|l)ice$", "${1}ouse"},
-	[]string{"(bus)(es)?$", "${1}"},
-	[]string{"(o)es$", "${1}"},
-	[]string{"(shoe)s$", "${1}"},
-	[]string{"(cris|test)(is|es)$", "${1}is"},
-	[]string{"^(a)x[ie]s$", "${1}xis"},
-	[]string{"(octop|vir)(us|i)$", "${1}us"},
-	[]string{"(alias|status)(es)?$", "${1}"},
-	[]string{"^(ox)en", "${1}"},
-	[]string{"(vert|ind)ices$", "${1}ex"},
-	[]string{"(matr)ices$", "${1}ix"},
-	[]string{"(quiz)zes$", "${1}"},
-	[]string{"(database)s$", "${1}"},
+	{"s$", ""},
+	{"(ss)$", "${1}"},
+	{"(n)ews$", "${1}ews"},
+	{"([ti])a$", "${1}um"},
+	{"((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)(sis|ses)$", "${1}sis"},
+	{"(^analy)(sis|ses)$", "${1}sis"},
+	{"([^f])ves$", "${1}fe"},
+	{"(hive)s$", "${1}"},
+	{"(tive)s$", "${1}"},
+	{"([lr])ves$", "${1}f"},
+	{"([^aeiouy]|qu)ies$", "${1}y"},
+	{"(s)eries$", "${1}eries"},
+	{"(m)ovies$", "${1}ovie"},
+	{"(x|ch|ss|sh)es$", "${1}"},
+	{"^(m|l)ice$", "${1}ouse"},
+	{"(bus)(es)?$", "${1}"},
+	{"(o)es$", "${1}"},
+	{"(shoe)s$", "${1}"},
+	{"(cris|test)(is|es)$", "${1}is"},
+	{"^(a)x[ie]s$", "${1}xis"},
+	{"(octop|vir)(us|i)$", "${1}us"},
+	{"(alias|status)(es)?$", "${1}"},
+	{"^(ox)en", "${1}"},
+	{"(vert|ind)ices$", "${1}ex"},
+	{"(matr)ices$", "${1}ix"},
+	{"(quiz)zes$", "${1}"},
+	{"(database)s$", "${1}"},
 }
 
 var irregularInflections = [][]string{
-	[]string{"person", "people"},
-	[]string{"man", "men"},
-	[]string{"child", "children"},
-	[]string{"sex", "sexes"},
-	[]string{"move", "moves"},
-	[]string{"mombie", "mombies"},
+	{"person", "people"},
+	{"man", "men"},
+	{"child", "children"},
+	{"sex", "sexes"},
+	{"move", "moves"},
+	{"mombie", "mombies"},
 }
 
 var uncountableInflections = []string{"equipment", "information", "rice", "money", "species", "series", "fish", "sheep", "jeans", "police"}
@@ -115,18 +115,18 @@ func compile() {
 
 	for _, value := range irregularInflections {
 		infs := []inflection{
-			inflection{regexp: regexp.MustCompile(strings.ToUpper(value[0]) + "$"), replace: strings.ToUpper(value[1])},
-			inflection{regexp: regexp.MustCompile(strings.Title(value[0]) + "$"), replace: strings.Title(value[1])},
-			inflection{regexp: regexp.MustCompile(value[0] + "$"), replace: value[1]},
+			{regexp: regexp.MustCompile(strings.ToUpper(value[0]) + "$"), replace: strings.ToUpper(value[1])},
+			{regexp: regexp.MustCompile(strings.Title(value[0]) + "$"), replace: strings.Title(value[1])},
+			{regexp: regexp.MustCompile(value[0] + "$"), replace: value[1]},
 		}
 		compiledPluralMaps = append(compiledPluralMaps, infs...)
 	}
 
 	for _, value := range irregularInflections {
 		infs := []inflection{
-			inflection{regexp: regexp.MustCompile(strings.ToUpper(value[1]) + "$"), replace: strings.ToUpper(value[0])},
-			inflection{regexp: regexp.MustCompile(strings.Title(value[1]) + "$"), replace: strings.Title(value[0])},
-			inflection{regexp: regexp.MustCompile(value[1] + "$"), replace: value[0]},
+			{regexp: regexp.MustCompile(strings.ToUpper(value[1]) + "$"), replace: strings.ToUpper(value[0])},
+			{regexp: regexp.MustCompile(strings.Title(value[1]) + "$"), replace: strings.Title(value[0])},
+			{regexp: regexp.MustCompile(value[1] + "$"), replace: value[0]},
 		}
 		compiledSingularMaps = append(compiledSingularMaps, infs...)
 	}
@@ -134,9 +134,9 @@ func compile() {
 	for i := len(pluralInflections) - 1; i >= 0; i-- {
 		value := pluralInflections[i]
 		infs := []inflection{
-			inflection{regexp: regexp.MustCompile(strings.ToUpper(value[0])), replace: strings.ToUpper(value[1])},
-			inflection{regexp: regexp.MustCompile(value[0]), replace: value[1]},
-			inflection{regexp: regexp.MustCompile("(?i)" + value[0]), replace: value[1]},
+			{regexp: regexp.MustCompile(strings.ToUpper(value[0])), replace: strings.ToUpper(value[1])},
+			{regexp: regexp.MustCompile(value[0]), replace: value[1]},
+			{regexp: regexp.MustCompile("(?i)" + value[0]), replace: value[1]},
 		}
 		compiledPluralMaps = append(compiledPluralMaps, infs...)
 	}
@@ -144,9 +144,9 @@ func compile() {
 	for i := len(singularInflections) - 1; i >= 0; i-- {
 		value := singularInflections[i]
 		infs := []inflection{
-			inflection{regexp: regexp.MustCompile(strings.ToUpper(value[0])), replace: strings.ToUpper(value[1])},
-			inflection{regexp: regexp.MustCompile(value[0]), replace: value[1]},
-			inflection{regexp: regexp.MustCompile("(?i)" + value[0]), replace: value[1]},
+			{regexp: regexp.MustCompile(strings.ToUpper(value[0])), replace: strings.ToUpper(value[1])},
+			{regexp: regexp.MustCompile(value[0]), replace: value[1]},
+			{regexp: regexp.MustCompile("(?i)" + value[0]), replace: value[1]},
 		}
 		compiledSingularMaps = append(compiledSingularMaps, infs...)
 	}

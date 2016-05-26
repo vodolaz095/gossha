@@ -289,7 +289,7 @@ loop:
 		// set nocount on; select 1
 		// see TestIgnoreEmptyResults test
 		//case doneStruct:
-			//break loop
+		//break loop
 		case []columnStruct:
 			cols = make([]string, len(token))
 			for i, col := range token {
@@ -343,7 +343,7 @@ type MssqlRows struct {
 }
 
 func (rc *MssqlRows) Close() error {
-	for _ = range rc.tokchan {
+	for range rc.tokchan {
 	}
 	rc.tokchan = nil
 	return nil
