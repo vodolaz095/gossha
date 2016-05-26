@@ -10,14 +10,13 @@ all: build
 deps:
 	go get -u github.com/tools/godep
 	go get -u github.com/golang/lint/golint
-	go get -v .
-#	godep restore -v
+	godep go install -v ./...
 
 check: deps
 	gofmt  -w=true -s=true -l=true ./..
 	golint ./...
 	go vet
-	go test -v ./...
+	godep go test -v ./...
 
 test: check
 
