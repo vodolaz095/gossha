@@ -1,49 +1,53 @@
-export semver=1.1.6
+export semver=2.0.0
 export arch=$(shell uname)-$(shell uname -m)
 export gittip=$(shell git log --format='%h' -n 1)
 export ver=$(semver).$(gittip).$(arch)
-export subver=Gloomy Sunday made via $(shell hostname) on $(shell date)
 export archiv=build/gossha-$(arch)-v$(semver)
 
 
 all: build
 
-engrave:
-	rm -f ver.go
-	touch ver.go
-	echo "package gossha" >> ver.go
-	echo "" >>ver.go
-	echo "//VERSION constant is engraved on build process" >>ver.go
-	echo "const VERSION = \"$(ver)\"" >> ver.go
-	echo "" >>ver.go
-	echo "//SUBVERSION constant is engraved on build process" >>ver.go
-	echo "const SUBVERSION = \"$(subver)\"" >>ver.go
-	echo "" >>ver.go
-
 deps:
 	go get -u github.com/tools/godep
 	go get -u github.com/golang/lint/golint
 	go get -v .
-	godep restore -v
+#	godep restore -v
 
 check: deps
 	gofmt  -w=true -s=true -l=true ./..
 	golint ./...
 	go vet
-	godep go test -v
+	go test -v ./...
 
+test: check
 
-build: clean engrave deps check
-	godep go build -o "build/gossha" app/gossha.go
-	git checkout ver.go
+build: clean deps check
+	go build -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
 
-dist: build
+build_mysql_only: clean deps check
+	go build -tags "mysql nosqlite3" -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
+
+build_mysql_sqlite3: clean deps check
+	go build -tags "mysql" -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
+
+build_postgress_only: clean deps check
+	go build -tags "postgresql nosqlite3" -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
+
+build_mysql_postgress: clean deps check
+	go build -tags "mysql postgresql nosqlite3" -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
+
+build_postgress_sqlite3: clean deps check
+	go build -tags "postgresql" -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
+
+build_mysql_postgress_sqlite3: clean deps check
+	go build -tags "postgresql mysql" -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
+
+dist: build_mysql_postgress_sqlite3
 	zip $(archiv).zip  build/gossha README.md README_RU.md CHANGELOG.md homedir/ contrib/ -r
 	tar -czvf $(archiv).tar.gz  build/gossha README.md README_RU.md CHANGELOG.md homedir/ contrib/
 	tar -cjvf $(archiv).tar.bz2 build/gossha README.md README_RU.md CHANGELOG.md homedir/ contrib/
 
-
-sign:
+sign: dist
 	rm build/*.txt -f
 	rm build/*.txt.sig -f
 	find build/ -name gossha-* -exec md5sum {} + > build/md5sum.txt
@@ -67,7 +71,6 @@ sign:
 	@echo "*.sig files are signed with my GPG key of \`994C6375\`"
 
 clean:
-	git checkout ver.go
 	rm -rf build/gossha
 	rm -rf build/*.zip
 	rm -rf build/*.tar.gz
@@ -93,3 +96,4 @@ keys:
 	rm -f build/id_rsa.pub
 	ssh-keygen -N '' -f build/id_rsa
 
+.PHONY: build

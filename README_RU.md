@@ -12,7 +12,7 @@ GoSSHa
 и автоматизации.
 
 Пример использования - чат для системных администраторов на сервере, с возможносью
-запускать скрипты по командам пользователей и интеграции с внешними базами данных.
+запускать скрипты по командам пользователей и интеграция с внешними базами данных.
 
 Основные особенности
 =================================
@@ -122,8 +122,8 @@ GoSSHa
 ```
 
 Обычные сообщения выделены белым цветом, системные - зелёным, личные - синим.
-Для отправки личных сообщений, наберите символ Кракозабла `@`, потом имя пользователя
-(автодополнение по `TAB` работает), потом сообщение.
+Для отправки личных сообщений, наберите символ крякозабла `@`, потом имя пользователя
+(автодополнение по  нажатию клавиши `TAB` работает), потом сообщение.
 Личные сообщения `НЕ СОХРАНЯЮТСЯ` в базе данных, они могут быть доставлены только когда
 получатель соединён с сервером, и приватные сообщения пропадают, когда пользователь
 завершает сеанс.
@@ -139,36 +139,81 @@ GoSSHa
 
 2) Установив переменные окружения
 
-3) Ввести параметры в конфигурационный файл, загруженный из `/etc/gossha/gossha.json`
+3) Ввести параметры в конфигурационный файл, загруженный из `/etc/gossha/gossha.toml`
 
-4) Ввести параметры в конфигурационный файл, загруженный из `$HOME/.gossha/gossha.json`
+4) Ввести параметры в конфигурационный файл, загруженный из `$HOME/.gossha/gossha.toml`
 
 Вот пример конфигурации:
 
-```javascript
+```toml
 
-		{
-		  "port": 27015,
-		  "debug": false,
-		  "driver": "sqlite3",
-		  "connectionString": "/home/vodolaz095/.gossha/gossha.db",
-		  "sshPublicKeyPath": "/home/vodolaz095/.ssh/id_rsa.pub",
-		  "sshPrivateKeyPath": "/home/vodolaz095/.ssh/id_rsa",
-		  "homedir": "/home/vodolaz095/.gossha",
-		  "executeOnMessage": "",
-		  "executeOnPrivateMessage": ""
-		}
+# Automatically generated config file for GoSSHa - SSH powered chat
+# Place it either in
+#   /etc/gossha/gossha.toml
+# or
+#   ~/.gossha/gossha.toml
+#
+
+# Enable debug
+Debug=true
+
+# On what port to listen for all interfaces (like for 0.0.0.0 address)
+Port = 27015
+
+# What addresses to bind to
+BindTo = ["127.0.0.1:27014"]
+
+#Setting database connection - various possible combinations are shown
+
+#SQLite3 with database in local file
+#Driver = "sqlite3"
+#ConnectionString = "/home/vodolaz095/.gossha/gossha.db"
+
+#SQLite3 with database in memory
+#Driver = "sqlite3"
+#ConnectionString = ":memory:"
+
+#MySQL database
+#Driver = "mysql"
+#ConnectionString = "username:password@hostname/database?charset=utf8&parseTime=True&loc=Local"
+
+#PostgreSQL database. 1st variant
+#Driver = "postgres"
+#ConnectionString ="user=gorm dbname=gorm sslmode=disable"
+
+#PostgreSQL database. 2nd variant
+#Driver="postgres"
+#ConnectionString="postgres://pqgotest:password@localhost/pqgotest?sslmode=verify-full")"
+
+#This database connection setting are being used
+Driver = "sqlite3"
+ConnectionString = "/home/vodolaz095/.gossha/gossha.db"
+
+
+#Path to SSH Public key
+SshPublicKeyPath = "/home/vodolaz095/.ssh/id_rsa.pub"
+#Path to SSH Private key
+SshPrivateKeyPath = "/home/vodolaz095/.ssh/id_rsa"
+
+#Directory to search for custom scripts
+Homedir = "/home/vodolaz095/.gossha"
+
+#Script to be executed on each message
+ExecuteOnMessage=""
+
+#Script to be execute on each private message
+ExecuteOnPrivateMessage=""
+
 
 ```
 
 ***Port*** (целое положительное число) порт, который слушает приложение на  `0.0.0.0` адресе (Все интерфейсы).
-Значение по умолчанию - `27015`. Этот параметр можно задать флагом командной строки `--port=27015`
-или установив переенную окружения `GOSSHA_PORT=27015`ы.
+Значение по умолчанию - `27015`. Этот параметр можно задать установив переенную окружения `GOSSHA_PORT=27015`ы.
 
 
-***Debug*** (boolean) toggle mode with usage of more verbose output to stdout and start [pprof](https://golang.org/pkg/net/http/pprof/)
-server on `localhost:3000` port for debugging/benchmarking purposes.
-Can be enabled by `--debug=true` flag, or via `GOSSHA_DEBUG=true` environment value.
+***Debug*** (булевое значение) включить режим отладки, совместивый с [pprof](https://golang.org/pkg/net/http/pprof/).
+Получить доступ к отладочной информации можно по адресу [http://localhost:6060](http://localhost:6060).
+Также данный режим можно включить, используя переменную окружения `GOSSHA_DEBUG=true`
 
 ***Driver*** и ***connectionString*** позволяют настроись соединение с базой данных
 с помощью соответствующих драйверов:
@@ -191,38 +236,32 @@ Can be enabled by `--debug=true` flag, or via `GOSSHA_DEBUG=true` environment va
 
 ```
 По умолчанию используется драйвер базы данных `sqlite3` с базой, хранящейся в `$HOME/.gossha/gossha.db`.
-Параметр `driver` можно задать флагом командной строки `--driver=sqlite3` или переменной окружения `GOSSHA_DRIVER=sqlite3`
-Параметр  `connectionString` можно задать флагом командной строки `--connectionString=:memory:`
-или переменной окружения `GOSSHA_CONNECTIONSTRING=:memory:`.
+Параметр `driver` можно задать переменной окружения `GOSSHA_DRIVER=sqlite3`
+Параметр  `connectionString` можно задать переменной окружения `GOSSHA_CONNECTIONSTRING=:memory:`.
 
 ***SshPublicKeyPath*** указывает на путь к файлу публичного ключа, используемого SSH сервером.
 Значение по умолчанию `$HOME/.ssh/id_rsa.pub`.
-Параметр можно задать флагом командной строки `--sshPublicKeyPath=/home/myusername/.ssh/id_rsa.pub`
-или переменной окружения `GOSSHA_SSHPUBLICKEYPATH=/home/myusername/.ssh/id_rsa.pub`.
+Параметр можно задать переменной окружения `GOSSHA_SSHPUBLICKEYPATH=/home/myusername/.ssh/id_rsa.pub`.
 
 ***sshPrivateKeyPath***  указывает на путь к файлу личного ключа, используемого SSH сервером.
 Значение по умолчанию `$HOME/.ssh/id_rsa.pub`.
-Параметр можно задать флагом командной строки `--sshPrivateKeyPath=/home/myusername/.ssh/id_rsa`
-или переменной окружения  `GOSSHA_SSHPRIVATEKEYPATH=/home/myusername/.ssh/id_rsa`.
+Параметр можно задать переменной окружения  `GOSSHA_SSHPRIVATEKEYPATH=/home/myusername/.ssh/id_rsa`.
 
 ***Homedir*** путь к директории, содержащей исполняемые файлы, которые можно запустить используя команду
  `\x` в чате. Эти исполняемые файлы могут быть бинарными файлами, шелл скриптами, исполняемыми файлами,
 как примеры в директории  `homedir/scripts`. Имя пользователя, IP адресс, и другие данные
 устанавливаются как переменные окружения сервера.
-Параметр можно задать флагом командной строки `--homedir=/home/myusername/.gossha`
-или переменной окружения `GOSSHA_HOMEDIR=/home/myusername/.gossha`.
+Параметр можно задать переменной окружения `GOSSHA_HOMEDIR=/home/myusername/.gossha`.
 
 ***executeOnMessage*** путь к исполняемому файлу, запускаемому после доставки каждого публичного
 сообщения. Исполняемый файл может быть шелл скриптом, бинарным, nodejs или PHP скриптом.
 См. пример `homedir/afterMessage`.
-Параметр можно задать флагом командной строки  `--executeOnMessage=/home/myusername/.gossha/afterMessage`
-или переменной окружения `GOSSHA_EXECUTEAFTERMESSAGE=/home/myusername/.gossha/afterMessage`.
+Параметр можно задать переменной окружения `GOSSHA_EXECUTEAFTERMESSAGE=/home/myusername/.gossha/afterMessage`.
 
 ***executeOnPrivateMessage*** путь к исполняемому файлу, запускаемому после доставки каждого личного
 сообщения. Исполняемый файл может быть шелл скриптом, бинарным, nodejs или PHP скриптом.
 См. пример `homedir/afterPrivateMessage`.
-Параметр можно задать флагом командной строки  `--executeOnPrivateMessage=/home/myusername/.gossha/afterPrivateMessage`
-или переменной окружения `GOSSHA_EXECUTEAFTERPRIVATEMESSAGE=/home/myusername/.gossha/afterPrivateMessage` environment value.
+Параметр можно задать переменной окружения `GOSSHA_EXECUTEAFTERPRIVATEMESSAGE=/home/myusername/.gossha/afterPrivateMessage` environment value.
 
 
 Компилирование из исходных кодов
@@ -237,10 +276,7 @@ Can be enabled by `--debug=true` flag, or via `GOSSHA_DEBUG=true` environment va
 
 ```shell
 
-	$ cd $GOPATH/src/github.com
-	$ mkdir vodolaz095
-	$ cd vodolaz095
-	$ git clone ssh://git@github.org/vodolaz095/gossha.git
+	$ go get github.com/vodolaz095/gossha
 
 ```
 
@@ -248,6 +284,7 @@ Can be enabled by `--debug=true` flag, or via `GOSSHA_DEBUG=true` environment va
 
 ```shell
 
+	$ cd $GOPATH/src/github.com/vodolaz095/gossha
 	$ make
 
 ```

@@ -6,37 +6,43 @@ import (
 	"testing"
 	"time"
 
+	"github.com/vodolaz095/gossha/config"
+	"github.com/vodolaz095/gossha/models"
 	"golang.org/x/crypto/ssh"
 )
 
-//http://godoc.org/golang.org/x/crypto/ssh#Client
+////http://godoc.org/golang.org/x/crypto/ssh#Client
 
 func spawnServer() error {
-	RuntimeConfig = &Config{}
-	RuntimeConfig.Port = 3396
-	RuntimeConfig.Debug = false
-	RuntimeConfig.Driver = "sqlite3"
-	RuntimeConfig.ConnectionString = ":memory:"
+	config.RuntimeConfig = new(config.Config)
+	config.RuntimeConfig.Port = 3396
+	config.RuntimeConfig.Debug = false
+	config.RuntimeConfig.Driver = "sqlite3"
+	config.RuntimeConfig.ConnectionString = ":memory:"
 	if os.Getenv("IS_TRAVIS") == "YES" {
-		RuntimeConfig.SSHPublicKeyPath = "/home/travis/gopath/src/github.com/vodolaz095/gossha/test/gossha_test.pub"
-		RuntimeConfig.SSHPrivateKeyPath = "/home/travis/gopath/src/github.com/vodolaz095/gossha/test/gossha_test"
+		config.RuntimeConfig.SSHPublicKeyPath = "/home/travis/gopath/src/github.com/vodolaz095/gossha/test/gossha_test.pub"
+		config.RuntimeConfig.SSHPrivateKeyPath = "/home/travis/gopath/src/github.com/vodolaz095/gossha/test/gossha_test"
 	} else {
-		RuntimeConfig.SSHPublicKeyPath = GetPublicKeyPath()
-		RuntimeConfig.SSHPrivateKeyPath = GetPrivateKeyPath()
+		config.RuntimeConfig.SSHPublicKeyPath, _ = config.GetPublicKeyPath()
+		config.RuntimeConfig.SSHPrivateKeyPath, _ = config.GetPrivateKeyPath()
 	}
 
-	RuntimeConfig.Homedir = GetHomeDir()
-	RuntimeConfig.ExecuteOnMessage = ""
-	RuntimeConfig.ExecuteOnPrivateMessage = ""
-	InitDatabase("sqlite3", ":memory:")
-	err := CreateUser("a", "a", false)
+	config.RuntimeConfig.Homedir, _ = config.GetHomeDir()
+	config.RuntimeConfig.ExecuteOnMessage = ""
+	config.RuntimeConfig.ExecuteOnPrivateMessage = ""
+	err := models.InitDatabase("sqlite3", ":memory:", true)
 	if err != nil {
 		return err
 	}
-	err = CreateUser("b", "b", false)
+	err = models.CreateUser("a", "a", false)
 	if err != nil {
 		return err
 	}
+	err = models.CreateUser("b", "b", false)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -56,24 +62,7 @@ func connect(username, password string, port int) (ssh.Session, error) {
 	if err != nil {
 		return ssh.Session{}, err
 	}
-	defer session.Close()
-
-	// Set up terminal modes
-	modes := ssh.TerminalModes{
-		ssh.ECHO:          0,     // disable echoing
-		ssh.TTY_OP_ISPEED: 14400, // input speed = 14.4kbaud
-		ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
-	}
-	// Request pseudo terminal
-	if err := session.RequestPty("xterm", 80, 40, modes); err != nil {
-		return *session, fmt.Errorf("request for pseudo terminal failed: %s", err)
-	}
-
-	// Start remote shell
-	if err := session.Shell(); err != nil {
-		return *session, fmt.Errorf("failed to start shell: %s", err)
-	}
-	return *session, nil
+	return *session, err
 }
 
 func TestSpawnServer(t *testing.T) {
@@ -81,49 +70,63 @@ func TestSpawnServer(t *testing.T) {
 	if err != nil {
 		t.Error("Error spawning! -", err.Error())
 	}
+	t.Parallel()
 	go func() {
-		StartSSHD("0.0.0.0:3396")
+		err = StartSSHD("127.0.0.1:3396")
+		if err != nil {
+			t.Error("Error spawning! -", err.Error())
+		}
 	}()
-	time.Sleep(100 * time.Millisecond)
 }
 
-func TestAuthorizeViaGoodPassword(t *testing.T) {
-	session1, err := connect("a", "a", 3396)
-	defer session1.Close()
+func TestAuthorizeViaGoodPasswordForUser1(t *testing.T) {
+	t.Parallel()
+	time.Sleep(100 * time.Millisecond)
+	session, err := connect("a", "a", 3396)
 	if err != nil {
-		t.Error("Connection error:", err.Error())
+		t.Errorf("Connection error %s", err)
 	}
-	session2, err := connect("b", "b", 3396)
-	defer session2.Close()
+	err = session.Close()
 	if err != nil {
-		t.Error("Connection error:", err.Error())
+		t.Errorf("Error closing session %s", err)
+	}
+}
+
+func TestAuthorizeViaGoodPasswordForUser2(t *testing.T) {
+	t.Parallel()
+	time.Sleep(100 * time.Millisecond)
+	session, err := connect("b", "b", 3396)
+	if err != nil {
+		t.Errorf("Connection error %s", err)
+	}
+	err = session.Close()
+	if err != nil {
+		t.Errorf("Error closing session %s", err)
 	}
 }
 
 func TestAuthorizeViaBadPassword(t *testing.T) {
+	t.Parallel()
+	time.Sleep(100 * time.Millisecond)
 	_, err := connect("a", "b", 3396)
-	if err == nil {
-		t.Error("gossha: We need to have error for authenticating with wrong password!")
+	if err != nil {
+		if err.Error() != "ssh: handshake failed: ssh: unable to authenticate, attempted methods [none password], no supported methods remain" || err.Error() != "ssh: handshake failed: ssh: unable to authenticate, attempted methods [none password], no supported methods remain" {
+			t.Errorf("gossha: Wrong error: %s", err)
+		}
+	} else {
+		t.Error("Error have to be thrown!")
 	}
 }
 
-func TestQuiteCommand(t *testing.T) {
-	session1, err := connect("a", "a", 3396)
-	defer session1.Close()
-
-	//todo it have to close the session
-	_, err = session1.Stdout.Write([]byte("\\q\r"))
-	//_, err = session1.Output("\\q\r")
+func TestSendMessage(t *testing.T) {
+	t.Parallel()
+	time.Sleep(100 * time.Millisecond)
+	session, err := connect("a", "a", 3396)
 	if err != nil {
-		t.Error("Error sending command \\q! -", err.Error())
+		t.Errorf("Connection error %s", err)
 	}
-
-	/*
-		//todo it have to return the error!
-		time.Sleep(100 * time.Millisecond)
-		_, err = session1.Stdout.Write([]byte("\\q\r"))
-		if err != nil {
-			t.Error("Error sending command \\q! -", err.Error())
-		}
-	*/
+	err = session.Start("some test message\r")
+	if err != nil {
+		t.Errorf("Sending message error %s", err)
+	}
 }

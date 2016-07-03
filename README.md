@@ -25,7 +25,7 @@ Main addvantages
 
 4) We can start application listening on few addresses and ports on the same time. For example, listeing on `192.168.1.2:2222` on local area network, and on `193.41.32.25:27015` for uplink connections.
 
-5) Users can execute scripts defined by admin on behalf of users running the GoSSHa server.
+5) Users can execute scripts defined by admin on behalf of local system user running the GoSSHa server.
 
 6) Application can run scripts after each public or private message, with senders name, ip, message exported as environment variables. See `homedir/` folder for examples
 
@@ -141,30 +141,76 @@ Application can be configured in few wayes (ordered by priority).
 
 This is example config file provided with application:
 
-```javascript
+```toml
 
-		{
-		  "port": 27015,
-		  "debug": false,
-		  "driver": "sqlite3",
-		  "connectionString": "/home/vodolaz095/.gossha/gossha.db",
-		  "sshPublicKeyPath": "/home/vodolaz095/.ssh/id_rsa.pub",
-		  "sshPrivateKeyPath": "/home/vodolaz095/.ssh/id_rsa",
-		  "homedir": "/home/vodolaz095/.gossha",
-		  "executeOnMessage": "",
-		  "executeOnPrivateMessage": ""
-		}
+# Automatically generated config file for GoSSHa - SSH powered chat
+# Place it either in
+#   /etc/gossha/gossha.toml
+# or
+#   ~/.gossha/gossha.toml
+#
+
+# Enable debug
+Debug=true
+
+# On what port to listen for all interfaces (like for 0.0.0.0 address)
+Port = 27015
+
+# What addresses to bind to
+BindTo = ["127.0.0.1:27014"]
+
+#Setting database connection - various possible combinations are shown
+
+#SQLite3 with database in local file
+#Driver = "sqlite3"
+#ConnectionString = "/home/vodolaz095/.gossha/gossha.db"
+
+#SQLite3 with database in memory
+#Driver = "sqlite3"
+#ConnectionString = ":memory:"
+
+#MySQL database
+#Driver = "mysql"
+#ConnectionString = "username:password@hostname/database?charset=utf8&parseTime=True&loc=Local"
+
+#PostgreSQL database. 1st variant
+#Driver = "postgres"
+#ConnectionString ="user=gorm dbname=gorm sslmode=disable"
+
+#PostgreSQL database. 2nd variant
+#Driver="postgres"
+#ConnectionString="postgres://pqgotest:password@localhost/pqgotest?sslmode=verify-full")"
+
+#This database connection setting are being used
+Driver = "sqlite3"
+ConnectionString = "/home/vodolaz095/.gossha/gossha.db"
+
+
+#Path to SSH Public key
+SshPublicKeyPath = "/home/vodolaz095/.ssh/id_rsa.pub"
+#Path to SSH Private key
+SshPrivateKeyPath = "/home/vodolaz095/.ssh/id_rsa"
+
+#Directory to search for custom scripts
+Homedir = "/home/vodolaz095/.gossha"
+
+#Script to be executed on each message
+ExecuteOnMessage=""
+
+#Script to be execute on each private message
+ExecuteOnPrivateMessage=""
+
 
 ```
 
 ***Port*** (integer) for application to listein on `0.0.0.0` address (all interfaces). The
-default value is `27015`, it can be set by `--port=27015` flag, or via `GOSSHA_PORT=27015`
+default value is `27015`, it can be via `GOSSHA_PORT=27015`
 environment value.
 
 
 ***Debug*** (boolean) toggle mode with usage of more verbose output to stdout and start [pprof](https://golang.org/pkg/net/http/pprof/)
-server on `localhost:3000` port for debugging/benchmarking purposes.
-Can be enabled by `--debug=true` flag, or via `GOSSHA_DEBUG=true` environment value.
+server on [http://localhost:6060](http://localhost:6060) port for debugging/benchmarking purposes.
+Can be enabled by `GOSSHA_DEBUG=true` environment value.
 
 ***Driver*** and ***connectionString*** sets the connection to database.
 We can use [sqlite3](https://github.com/mattn/go-sqlite3),
@@ -186,30 +232,29 @@ Possible pairs of values are
 
 ```
 by default, the `sqlite3` driver is used with database stored at `$HOME/.gossha/gossha.db`.
-We can load `driver` from `--driver=sqlite3` flag or `GOSSHA_DRIVER=sqlite3` environment value
-We can load `connectionString` from `--connectionString=:memory:` flag or `GOSSHA_CONNECTIONSTRING=:memory:` environment value
+We can load `driver` from `GOSSHA_DRIVER=sqlite3` environment value and load `connectionString` from `GOSSHA_CONNECTIONSTRING=:memory:` environment value
 
 ***SshPublicKeyPath*** points to Public Key to be used by SSH server, default value is `$HOME/.ssh/id_rsa.pub`.
-Can be set via `--sshPublicKeyPath=/home/myusername/.ssh/id_rsa.pub` flag or `GOSSHA_SSHPUBLICKEYPATH=/home/myusername/.ssh/id_rsa.pub` environment value.
+Can be set via  `GOSSHA_SSHPUBLICKEYPATH=/home/myusername/.ssh/id_rsa.pub` environment value.
 
 ***sshPrivateKeyPath*** points to Private Key to be used by SSH server, default value is `$HOME/.ssh/id_rsa.pub`.
-Can be set via `--sshPrivateKeyPath=/home/myusername/.ssh/id_rsa` flag or `GOSSHA_SSHPRIVATEKEYPATH=/home/myusername/.ssh/id_rsa` environment value.
+Can be set via `GOSSHA_SSHPRIVATEKEYPATH=/home/myusername/.ssh/id_rsa` environment value.
 
 ***Homedir*** is path to directory containing user's scripts to be executed via `\x` command in chat. It is worth notice,
 that this scripts have to be executable files, like the examples, provided in `homedir/scripts` directory of
 the distribution or repo. The username, ip and other data is populated from environment values used for scripts.
 We can make this executable files in any language - shell, binaries, nodejs files, php scripts.
-Can be set via `--homedir=/home/myusername/.gossha` flag or `GOSSHA_HOMEDIR=/home/myusername/.gossha` environment value.
+Can be set by `GOSSHA_HOMEDIR=/home/myusername/.gossha` environment value.
 
 ***executeOnMessage*** is path to executable to be started on each message.
 We can make this executable files in any language - shell, binaries, nodejs files, php scripts.
 See `homedir/afterMessage` for shell example.
-Can be set via `--executeOnMessage=/home/myusername/.gossha/afterMessage` flag or `GOSSHA_EXECUTEAFTERMESSAGE=/home/myusername/.gossha/afterMessage` environment value.
+Can be set via `GOSSHA_EXECUTEAFTERMESSAGE=/home/myusername/.gossha/afterMessage` environment value.
 
 ***executeOnPrivateMessage*** is path to executable to be started on each message.
 We can make this executable files in any language - shell, binaries, nodejs files, php scripts.
 See `homedir/afterPrivateMessage` for shell example.
-Can be set via `--executeOnPrivateMessage=/home/myusername/.gossha/afterPrivateMessage` flag or `GOSSHA_EXECUTEAFTERPRIVATEMESSAGE=/home/myusername/.gossha/afterPrivateMessage` environment value.
+Can be set by means of `GOSSHA_EXECUTEAFTERPRIVATEMESSAGE=/home/myusername/.gossha/afterPrivateMessage` environment value.
 
 
 Building from sources
@@ -225,10 +270,7 @@ I assume you have one of popular `Linux` distros, i don't care about other OSes.
 
 ```shell
 
-	$ cd $GOPATH/src/github.com
-	$ mkdir vodolaz095
-	$ cd vodolaz095
-	$ git clone ssh://git@github.org/vodolaz095/gossha.git
+	$ go get github.com/vodolaz095/gossha
 
 ```
 
@@ -236,6 +278,7 @@ I assume you have one of popular `Linux` distros, i don't care about other OSes.
 
 ```shell
 
+	$ go get $GOPATH/github.com/vodolaz095/gossha
 	$ make
 
 ```
