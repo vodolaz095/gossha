@@ -50,6 +50,10 @@ func (w writerMock) ReadPassword(prompt string) (line string, err error) {
 	return "lalala", nil
 }
 
+func (w writerMock) SetPrompt(prompt string) {
+
+}
+
 func (w writerMock) Write(data []byte) (int, error) {
 	contents = contents + string(data)
 	return len(data), nil
