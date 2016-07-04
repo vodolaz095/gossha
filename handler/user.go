@@ -74,15 +74,25 @@ func (h *Handler) SignUpUser(args []string) error {
 		case 3:
 			name := args[1]
 			password := args[2]
-			return models.CreateUser(name, password, false)
-
-		case 2:
-			name := args[1]
-			password, err := h.Term.ReadPassword(fmt.Sprintf("Enter password for user `%s`>", name))
+			err := models.CreateUser(name, password, false)
 			if err != nil {
 				return err
 			}
-			return models.CreateUser(name, password, false)
+			_, err = h.writeToUser("Password for %s is set!", name)
+			return err
+			//TODO - not working, because `h.Term.ReadPassword` behaves unconsistent
+			//		case 2:
+			//			name := args[1]
+			//			//			fmt.Println("Waiting for password")
+			//			//			h.Term.Write([]byte(fmt.Sprintf("\nEnter password for ordinary user %s:\n", name)))
+			//			password, err := h.Term.ReadPassword(fmt.Sprintf("Enter password for user `%s`:", name))
+			//			h.Term.SetPrompt(h.PrintPrompt())
+			//			if err != nil {
+			//				return err
+			//			}
+			//			//			fmt.Println("Password recieved", password)
+			//			//			fmt.Println("Prompt updated, creating user")
+			//			return models.CreateUser(name, password, false)
 
 		default:
 			return fmt.Errorf("Try `\\r someUserName [newPassword]` to sign up or change password for somebody!")
@@ -99,18 +109,26 @@ func (h *Handler) SignUpRoot(args []string) error {
 		case 3:
 			name := args[1]
 			password := args[2]
-			return models.CreateUser(name, password, true)
-
-		case 2:
-			name := args[1]
-			password, err := h.Term.ReadPassword(fmt.Sprintf("Enter password for root `%s`>", name))
+			err := models.CreateUser(name, password, true)
 			if err != nil {
 				return err
 			}
-			return models.CreateUser(name, password, true)
+			_, err = h.writeToUser("Password for %s is set!", name)
+			return err
+
+			//TODO - not working, because `h.Term.ReadPassword` behaves unconsistent
+			//		case 2:
+			//			name := args[1]
+			//			h.Term.Write([]byte(fmt.Sprintf("\nEnter password for ADMIN user %s:\n", name)))
+			//			password, err := h.Term.ReadPassword(fmt.Sprintf("Enter password for root `%s`:", name))
+			//			h.Term.SetPrompt(h.PrintPrompt())
+			//			if err != nil {
+			//				return err
+			//			}
+			//			return models.CreateUser(name, password, true)
 
 		default:
-			return fmt.Errorf("Try `\\rr someUserName [newPassword]` to sign up or change password for somebody with root permissions!")
+			return fmt.Errorf("Try `\\rr someUserName newPassword` to sign up or change password for somebody with root permissions!")
 		}
 	}
 	return fmt.Errorf("You have to be root to signing up/registering/changing password!")

@@ -14,6 +14,7 @@ import (
 
 //TerminalInterface is interface repserenting terminal
 type TerminalInterface interface {
+	SetPrompt(string)
 	ReadPassword(prompt string) (line string, err error)
 	Write([]byte) (numberOfBytesWritten int, err error)
 }
@@ -64,9 +65,9 @@ func New() Handler {
 	h.addKnownCommand("i", "Info", "Print (I)nformation about yourself")
 	h.addKnownCommand("k", "ImportPublicKey", "Use locally available SSH (K)eys to authorise your logins on this server")
 	h.addKnownCommand("f", "ForgotPublicKey", "(F)orgot local available SSH key used for authorising your logins via this client")
-	h.addKnownCommand("b", "Ban", "(B)an user (you need to have `root` permissions!)")
-	h.addKnownCommand("r", "SignUpUser", "(R)egister new user (you need to have `root` permissions!)")
-	h.addKnownCommand("rr", "SignUpRoot", "(R)egister new (r)oot user (you need to have `root` permissions!)")
+	h.addKnownCommand("b", "Ban", "(B)an user (you need to have `root` permissions!). Example - \\r username")
+	h.addKnownCommand("r", "SignUpUser", "(R)egister new user (you need to have `root` permissions!). Example: \\r username password")
+	h.addKnownCommand("rr", "SignUpRoot", "(R)egister new (r)oot user (you need to have `root` permissions!). Example: \\rr username password")
 	h.addKnownCommand("x", "ExecCommand", "E(X)ecutes custom user script from home directory")
 	h.addKnownCommand("passwd", "ChangePassword", "Changes current user password")
 	return h
