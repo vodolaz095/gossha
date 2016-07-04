@@ -6,7 +6,7 @@ Breaking changes:
 - code simplification
 - more unit tests
 - possibility to build application with different database drivers being used. For example, build with only MySQL support, or build with MySQL, SQLite3 and PostgreSQL support
-- deprecated overriding configuration by flags - it made online documentation very infriendly, and using file/environment is easier
+- deprecated overriding configuration by flags - it made online documentation very unfriendly, and using file/environment is easier.
 
 Many typos and small issues fixed
 

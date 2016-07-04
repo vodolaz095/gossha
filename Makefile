@@ -91,9 +91,6 @@ install: build
 uninstall:
 	su -c 'rm -rf /usr/bin/gossha'
 
-docker: keys build
-	su -c 'docker build .'
-
 keys:
 	rm -f build/id_rsa
 	rm -f build/id_rsa.pub

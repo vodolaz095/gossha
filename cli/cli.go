@@ -163,7 +163,7 @@ func ProcessConsoleCommand() {
 	var dumpConfig = &cobra.Command{
 		Use:   "dumpcfg",
 		Short: "Outputs the configuration in YAML format",
-		Long:  "Outputs the configuration in YAML format. Save this config in `$HOME/.gossha/gossha.yaml` or `/etc/gossha/gossha.yaml`",
+		Long:  "Outputs the configuration in YAML format. Save this config in `$HOME/.gossha/gossha.toml` or `/etc/gossha/gossha.toml`",
 		Run: func(cmd *cobra.Command, args []string) {
 			json, err := config.RuntimeConfig.Dump()
 			if err != nil {
