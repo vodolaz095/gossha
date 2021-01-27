@@ -8,15 +8,12 @@ export archiv=build/gossha-$(arch)-v$(semver)
 all: build
 
 deps:
-	go get -u github.com/tools/godep
 	go get -u github.com/golang/lint/golint
-	godep go install -v ./...
 
-check: deps
-	gofmt  -w=true -s=true -l=true ./..
-	golint ./...
+check:
+	gofmt  -w=true -s=true -l=true ./
+	golint ./..
 	go vet
-	godep go test -v ./...
 
 test: check
 
