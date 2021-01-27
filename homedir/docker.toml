@@ -1,0 +1,6 @@
+Port = 22
+Driver = "sqlite3"
+ConnectionString = "/data/gossha.db"
+SshPublicKeyPath = "/data/id_rsa.pub"
+SshPrivateKeyPath = "/data/id_rsa"
+Homedir = "/data/"

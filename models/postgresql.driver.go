@@ -3,5 +3,5 @@
 package models
 
 import (
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-) //it is ok
+	_ "github.com/jinzhu/gorm/dialects/postgres" //it is ok
+)

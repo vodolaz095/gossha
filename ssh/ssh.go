@@ -27,7 +27,7 @@ func StartSSHD(addr string) error {
 
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
-		return fmt.Errorf("Failed to listen on %v port. Reason: (%s)", addr, err.Error())
+		return fmt.Errorf("%s - while binding to listen on %v port", err, addr)
 	}
 
 	fmt.Printf("GoSSHa is listening on %v port!\n", addr)

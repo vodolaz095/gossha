@@ -8,9 +8,11 @@ export archiv=build/gossha-$(arch)-v$(semver)
 all: build
 
 deps:
-	go get -u github.com/golang/lint/golint
+	go mod download
+	go mod verify
+	go mod tidy
 
-check:
+check: deps
 	gofmt  -w=true -s=true -l=true ./
 	golint ./..
 	go vet
@@ -19,6 +21,13 @@ test: check
 
 build: clean deps check
 	go build -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
+
+build_podman:
+	podman build -t reg.vodolaz095.life/gossha:$(ver) .
+
+build_without_tests: clean deps
+	go build -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
+	upx build/gossha
 
 build_mysql_only: clean deps check
 	go build -tags "mysql nosqlite3" -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go

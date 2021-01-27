@@ -10,8 +10,8 @@ func TestGetRemoteHostname(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error getting hostname %s", err)
 	}
-	if ips != "localhost.localdomain." {
-		t.Errorf("Wrong localhost %s instead of localhost.localdomain.", ips)
+	if ips != "localhost" {
+		t.Errorf("Wrong localhost >%s< instead of localhost.localdomain.", ips)
 	}
 }
 
