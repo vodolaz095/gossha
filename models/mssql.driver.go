@@ -1,5 +1,3 @@
-// +build mssql
-
 package models
 
 import (

@@ -2,40 +2,32 @@ package ssh
 
 import (
 	"fmt"
-	"net"
-
 	"github.com/vodolaz095/gossha/handler"
+	"log"
+	"net"
+	"os"
 	//	"github.com/vodolaz095/gossha/models"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-////HandlerInterface describes the handler
-//type HandlerInterface interface {
-//	MakeSSHConfig() (*ssh.ServerConfig, error)
-//	PrintPrompt() string
-//	AutoCompleteCallback(s string, pos int, r rune) (string, int, bool)
-//	PrintHelpForUser(connection ssh.Channel, term *terminal.Terminal, command []string) error
-//	GetMessages(int limit) ([]models.Notification, error)
-//	ProcessCommand(connection ssh.Channel, term *terminal.Terminal, command []string) error
-//	Leave(connection ssh.Channel, term *terminal.Terminal, command []string) error
-//}
+// Good read - http://play.golang.org/p/uN46-Pvd4O
+
+var sshdLog *log.Logger
 
 // StartSSHD starts the ssh server on address:port provided
 func StartSSHD(addr string) error {
+	sshdLog = log.New(os.Stdout, "[SSHD]", log.LstdFlags)
 	handler.Board = make(map[string]*handler.Handler, 0)
-
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		return fmt.Errorf("%s - while binding to listen on %v port", err, addr)
 	}
-
-	fmt.Printf("GoSSHa is listening on %v port!\n", addr)
-
+	sshdLog.Printf("GoSSHa is listening on %v port!\n", addr)
 	for {
 		tcpConn, err := listener.Accept()
 		if err != nil {
-			fmt.Printf("Failed to accept incoming connection (%s)\n", err)
+			sshdLog.Printf("Failed to accept incoming connection (%s)\n", err)
 			continue
 		}
 		h := handler.New()
@@ -43,7 +35,7 @@ func StartSSHD(addr string) error {
 		_, chans, reqs, err := ssh.NewServerConn(tcpConn, config)
 		//		sshConn, chans, reqs, err := ssh.NewServerConn(tcpConn, config)
 		if err != nil {
-			fmt.Printf("Failed to handshake (%s)\n", err.Error())
+			sshdLog.Printf("Failed to handshake (%s)\n", err.Error())
 			continue
 		}
 
@@ -69,9 +61,6 @@ func handleChannel(newChannel ssh.NewChannel, h *handler.Handler) {
 		fmt.Printf("Could not accept channel (%s)", err)
 		return
 	}
-
-	//http://play.golang.org/p/uN46-Pvd4O
-	// Sessions have out-of-band requests such as "shell", "pty-req" and "env"
 	go func() {
 		for req := range requests {
 			switch req.Type {
@@ -81,11 +70,20 @@ func handleChannel(newChannel ssh.NewChannel, h *handler.Handler) {
 			case "env":
 				req.Reply(true, nil)
 				break
+			case "exec":
+				cmd := string(req.Payload)
+				sshdLog.Printf("Trying to execute command %s via `exec`...", cmd)
+				h.ProcessCommand(cmd)
+				req.Reply(false, nil)
+				break
 			case "shell":
-				// We only accept the default shell
-				// (i.e. no command in the Payload)
-				if len(req.Payload) == 0 {
+				cmd := string(req.Payload)
+				if len(cmd) == 0 {
 					req.Reply(true, nil)
+				} else {
+					sshdLog.Printf("Trying to execute command %s via `shell`...", cmd)
+					h.ProcessCommand(cmd)
+					req.Reply(false, nil)
 				}
 				break
 			default:
@@ -93,37 +91,6 @@ func handleChannel(newChannel ssh.NewChannel, h *handler.Handler) {
 			}
 		}
 	}()
-	/*
-		//http://play.golang.org/p/uN46-Pvd4O
-		// Sessions have out-of-band requests such as "shell", "pty-req" and "env"
-		//we try to utilize it
-		go func() {
-			for req := range requests {
-				switch req.Type {
-				case "shell":
-					if len(req.Payload) == 0 {
-						fmt.Println("Normal login.")
-						req.Reply(true, nil)
-					} else {
-						cmd := fmt.Sprintf("Trying to execute command via `shell`: %v\n", string(req.Payload))
-						connection.Write([]byte(cmd))
-						fmt.Println(cmd)
-						req.Reply(false, nil)
-					}
-					break
-				case "exec":
-					cmd := fmt.Sprintf("Trying to execute command via `exec`: %v\n", string(req.Payload))
-					connection.Write([]byte(cmd))
-					req.Reply(false, nil)
-					fmt.Println(cmd)
-					break
-				default:
-					req.Reply(true, nil)
-				}
-			}
-		}()
-	*/
-
 	handler.Board[h.SessionID] = h
 	term := terminal.NewTerminal(connection, h.PrintPrompt())
 	term.AutoCompleteCallback = h.AutoCompleteCallback

@@ -1,5 +1,3 @@
-// +build postgresql
-
 package models
 
 import (

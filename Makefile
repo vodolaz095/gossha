@@ -1,8 +1,9 @@
+export app=gossha
 export semver=2.0.0
 export arch=$(shell uname)-$(shell uname -m)
 export gittip=$(shell git log --format='%h' -n 1)
 export ver=$(semver).$(gittip).$(arch)
-export archiv=build/gossha-$(arch)-v$(semver)
+export archiv=build/$(app)-$(arch)-v$(semver)
 
 
 all: build
@@ -20,41 +21,23 @@ check: deps
 test: check
 
 build: clean deps check
-	go build -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
+	go build -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/$(app)" main.go
+	upx build/$(app)
 
 build_podman:
 	podman build -t reg.vodolaz095.life/gossha:$(ver) .
 
 build_without_tests: clean deps
-	go build -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
-	upx build/gossha
+	go build -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/$(app)" main.go
+	upx build/$(app)
 
-build_mysql_only: clean deps check
-	go build -tags "mysql nosqlite3" -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
+dist: build
+	zip $(archiv).zip  build/$(app) README.md README_RU.md CHANGELOG.md homedir/ contrib/ -r
+	tar -czvf $(archiv).tar.gz  build/$(app) README.md README_RU.md CHANGELOG.md homedir/ contrib/
+	tar -cjvf $(archiv).tar.bz2 build/$(app) README.md README_RU.md CHANGELOG.md homedir/ contrib/
 
-build_mysql_sqlite3: clean deps check
-	go build -tags "mysql" -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
-
-build_postgress_only: clean deps check
-	go build -tags "postgresql nosqlite3" -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
-
-build_mysql_postgress: clean deps check
-	go build -tags "mysql postgresql nosqlite3" -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
-
-build_postgress_sqlite3: clean deps check
-	go build -tags "postgresql" -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
-
-build_mysql_postgress_sqlite3: clean deps check
-	go build -tags "postgresql mysql" -ldflags "-X github.com/vodolaz095/gossha/version.Version=$(ver)" -o "build/gossha" main.go
-
-dist: build_mysql_postgress_sqlite3
-	zip $(archiv).zip  build/gossha README.md README_RU.md CHANGELOG.md homedir/ contrib/ -r
-	tar -czvf $(archiv).tar.gz  build/gossha README.md README_RU.md CHANGELOG.md homedir/ contrib/
-	tar -cjvf $(archiv).tar.bz2 build/gossha README.md README_RU.md CHANGELOG.md homedir/ contrib/
-
-docker: build_mysql_postgress_sqlite3 keys
-	systemctl start docker
-	docker build -t gossha .
+start:
+	go run main.go
 
 sign: dist
 	rm build/*.txt -f
@@ -80,7 +63,7 @@ sign: dist
 	@echo "*.sig files are signed with my GPG key of \`994C6375\`"
 
 clean:
-	rm -rf build/gossha
+	rm -rf build/$(app)
 	rm -rf build/*.zip
 	rm -rf build/*.tar.gz
 	rm -rf build/*.tar.bz2
@@ -92,7 +75,7 @@ clean:
 test: check
 
 install: build
-	su -c 'cp -f build/gossha /usr/bin/'
+	su -c 'cp -f build/$(app) /usr/bin/'
 
 uninstall:
 	su -c 'rm -rf /usr/bin/gossha'

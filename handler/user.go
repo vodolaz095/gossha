@@ -153,7 +153,11 @@ func (h *Handler) ChangePassword(args []string) error {
 	if err != nil {
 		return err
 	}
-	if h.CurrentUser.CheckPassword(old) {
+	good, err := h.CurrentUser.CheckPassword(old)
+	if err != nil {
+		return err
+	}
+	if good {
 		new1, err := h.Term.ReadPassword("Enter your new password:")
 		if err != nil {
 			return err
@@ -164,12 +168,15 @@ func (h *Handler) ChangePassword(args []string) error {
 		}
 		if new1 == new2 {
 			if len(new1) > 0 {
-				h.writeToUser("Setting new password...")
+				_, err1 := h.writeToUser("Setting new password...")
+				if err1 != nil {
+					return err1
+				}
 				return h.CurrentUser.SetPassword(new1)
 			}
-			return fmt.Errorf("Unable to use empty password!")
+			return fmt.Errorf("unable to use empty password!")
 		}
-		return fmt.Errorf("Passwords do not match!")
+		return fmt.Errorf("passwords do not match")
 	}
-	return fmt.Errorf("Wrong password!")
+	return fmt.Errorf("wrong password")
 }

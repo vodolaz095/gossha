@@ -1,5 +1,3 @@
-// +build !nosqlite3
-
 package models
 
 import (

@@ -24,7 +24,7 @@ func (h *Handler) ImportPublicKey(input []string) error {
 	if err != nil {
 		return err
 	}
-	k := string(ssh.MarshalAuthorizedKey(fingerprint))
+	k := ssh.MarshalAuthorizedKey(fingerprint)
 	key := models.Key{
 		UserID:  h.CurrentUser.ID,
 		Content: models.Hash(k),
@@ -42,9 +42,9 @@ func (h *Handler) ImportPublicKey(input []string) error {
 func (h *Handler) ForgotPublicKey(connection ssh.Channel, term *terminal.Terminal, input []string) error {
 	fingerprint := h.KeyFingerPrint
 	if fingerprint == nil {
-		return fmt.Errorf("Public key is empty!")
+		return fmt.Errorf("public key is empty")
 	}
-	k := string(ssh.MarshalAuthorizedKey(fingerprint))
+	k := ssh.MarshalAuthorizedKey(fingerprint)
 	key := models.Key{
 		UserID:  h.CurrentUser.ID,
 		Content: models.Hash(k),

@@ -31,8 +31,11 @@ func (h *Handler) LoginByUsernameAndPassword(c ssh.ConnMetadata, password string
 	if err := models.DB.Table("user").Where("name=?", name).First(&user).Error; err == gorm.ErrRecordNotFound {
 		return fmt.Errorf("User %v not found!", name)
 	}
-
-	if user.CheckPassword(password) {
+	good, err := user.CheckPassword(password)
+	if err != nil {
+		return err
+	}
+	if good {
 		h.SessionID = string(c.SessionID())
 		h.CurrentUser = user
 		h.IP = ip
@@ -128,8 +131,7 @@ func (h *Handler) MakeSSHConfig() *ssh.ServerConfig {
 			return nil, h.LoginByUsernameAndPassword(c, string(pass))
 		},
 		PublicKeyCallback: func(c ssh.ConnMetadata, key ssh.PublicKey) (*ssh.Permissions, error) {
-			k := string(ssh.MarshalAuthorizedKey(key))
-			//fmt.Printf("Public key is %v -- %v\n", key.Type(), k)
+			k := ssh.MarshalAuthorizedKey(key)
 			h.KeyFingerPrint = key
 			return nil, h.LoginByPublicKey(c, models.Hash(k))
 		},

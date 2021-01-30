@@ -1,8 +1,6 @@
 package models
 
 import (
-	//	"time"
-	//	"fmt"
 	"testing"
 )
 
@@ -20,11 +18,6 @@ func TestCreateUser(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error setting password - %s", err)
 	}
-
-	err = DB.Create(&user).Error
-	if err != nil {
-		t.Errorf("Error saving user profile to database - %s", err)
-	}
 }
 
 func TestFetchUserAndTestPassword(t *testing.T) {
@@ -33,20 +26,27 @@ func TestFetchUserAndTestPassword(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error fetching test user - %s", err)
 	}
-
-	if user.CheckPassword("wrong password") {
-		t.Errorf("Wrong password accepted!")
+	wrong, err := user.CheckPassword("wrong password")
+	if err != nil {
+		t.Errorf("%s : while checking bad password", err)
+	}
+	if wrong != false {
+		t.Errorf("wrong password accepted")
 	}
 
-	if !user.CheckPassword("test") {
-		t.Errorf("Good password rejected!")
+	good, err := user.CheckPassword("test")
+	if err != nil {
+		t.Errorf("%s : while checking bad password", err)
+	}
+	if good != true {
+		t.Errorf("good password rejected")
 	}
 }
 
 func TestCreateMessage(t *testing.T) {
-
+	t.Skipf("not implemented %s", "yet")
 }
 
 func TestGetMessages(t *testing.T) {
-
+	t.Skipf("not implemented %s", "yet")
 }
