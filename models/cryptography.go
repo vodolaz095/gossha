@@ -1,9 +1,9 @@
 package models
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
 	"fmt"
-	"math/rand"
 	"time"
 )
 
