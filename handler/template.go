@@ -6,19 +6,21 @@ package handler
 
 import (
 	"fmt"
-	"time"
-
 	"github.com/vodolaz095/gossha/models"
+	"time"
 	//	"golang.org/x/crypto/ssh"
 	//"golang.org/x/crypto/ssh/terminal"
 )
 
 // PrintPrompt makes promt for current user
 func (h *Handler) PrintPrompt() string {
-	return fmt.Sprintf("[%v@%v [%v] %v]{%v}:", h.CurrentUser.Name, h.Hostname, h.IP, "*", time.Now().Format("2006-1-2 15:04:05"))
+	return fmt.Sprintf(
+		"{%v}[%s@%s *]:",
+		time.Now().Format(timeStampFormat), h.CurrentUser.Name, h.IP,
+	)
 }
 
-// PrintMessage prints message in format of [username@hostname(192.168.1.2) *]{2006-1-2 15:04:05}:Hello!
+// PrintMessage prints message in format of [username@192.168.1.2:33921 *]{2006-1-2 15:04:05}:Hello!
 func (h *Handler) PrintMessage(m *models.Message, u *models.User) string {
 	var online string
 	if u.IsOnline() {
@@ -26,24 +28,16 @@ func (h *Handler) PrintMessage(m *models.Message, u *models.User) string {
 	} else {
 		online = "x"
 	}
-	return fmt.Sprintf("[%v@%v [%v] %v]{%v}:%v", u.Name, m.Hostname, m.IP, online, m.CreatedAt.Format("2006-1-2 15:04:05"), m.Message)
+	return fmt.Sprintf(
+		"{%s}[%s@%s %s]:%s",
+		m.CreatedAt.Format(timeStampFormat),
+		u.Name, m.IP, online, m.Message,
+	)
 }
 
-// PrintNotification pretty prints the Notification recieved by Nerve into terminal given
+// PrintNotification pretty prints the Notification received by Nerve into terminal given
 func (h *Handler) PrintNotification(n *models.Notification) error {
 	msg := h.PrintMessage(&n.Message, &n.User)
-	//	if n.IsChat {
-	//		_, err := h.writeToUser("%s%s%s", string(terminal.EscapeCodes.White), msg, string(terminal.EscapeCodes.Reset))
-	//		return err
-	//	}
-	//	if n.IsSystem {
-	//		_, err := h.writeToUser("%s%s%s", string(terminal.EscapeCodes.Green), msg, string(terminal.EscapeCodes.Reset))
-	//		return err
-	//	}
-	//	if n.IsPrivateMessage {
-	//		_, err := h.writeToUser("%s%s%s", string(terminal.EscapeCodes.Cyan), msg, string(terminal.EscapeCodes.Reset))
-	//		return err
-	//	}
 	_, err := h.writeToUser(msg)
 	return err
 }

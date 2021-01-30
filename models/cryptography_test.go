@@ -10,11 +10,3 @@ func TestHash(t *testing.T) {
 		t.Error("Wrong hash!")
 	}
 }
-
-func TestSalt(t *testing.T) {
-	salt1, _ := GenSalt()
-	salt2, _ := GenSalt()
-	if salt1 == salt2 {
-		t.Error("We got the same salt twice!!!")
-	}
-}

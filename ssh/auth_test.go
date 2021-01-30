@@ -52,8 +52,9 @@ func connect(username, password string, port int) (ssh.Session, error) {
 		Auth: []ssh.AuthMethod{
 			ssh.Password(password),
 		},
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
-	client, err := ssh.Dial("tcp", fmt.Sprintf("localhost:%v", port), config)
+	client, err := ssh.Dial("tcp", fmt.Sprintf("127.0.0.1:%v", port), config)
 	if err != nil {
 		return ssh.Session{}, err
 	}
@@ -71,12 +72,10 @@ func TestSpawnServer(t *testing.T) {
 		t.Error("Error spawning! -", err.Error())
 	}
 	t.Parallel()
-	go func() {
-		err = StartSSHD("127.0.0.1:3396")
-		if err != nil {
-			t.Error("Error spawning! -", err.Error())
-		}
-	}()
+	err = StartSSHD("127.0.0.1:3396")
+	if err != nil {
+		t.Error("Error spawning! -", err.Error())
+	}
 }
 
 func TestAuthorizeViaGoodPasswordForUser1(t *testing.T) {
@@ -120,13 +119,19 @@ func TestAuthorizeViaBadPassword(t *testing.T) {
 
 func TestSendMessage(t *testing.T) {
 	t.Parallel()
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(200 * time.Millisecond)
 	session, err := connect("a", "a", 3396)
 	if err != nil {
 		t.Errorf("Connection error %s", err)
 	}
-	err = session.Start("some test message\r")
+	t.Logf("User a connected with password a")
+	err = session.Run("some test message\r")
 	if err != nil {
 		t.Errorf("Sending message error %s", err)
+	}
+	t.Logf("Command send")
+	err = session.Close()
+	if err != nil {
+		t.Errorf("%s : while  closing session", err)
 	}
 }

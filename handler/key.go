@@ -18,7 +18,7 @@ import (
 func (h *Handler) ImportPublicKey(input []string) error {
 	fingerprint := h.KeyFingerPrint
 	if fingerprint == nil {
-		return fmt.Errorf("Public key is empty!")
+		return fmt.Errorf("empty public key")
 	}
 	_, err := h.writeToUser("Importing public key...")
 	if err != nil {
@@ -29,12 +29,21 @@ func (h *Handler) ImportPublicKey(input []string) error {
 		UserID:  h.CurrentUser.ID,
 		Content: models.Hash(k),
 	}
-	err = models.DB.Table("key").Create(&key).Error
+	err = models.DB.
+		Table("key").
+		Create(&key).
+		Error
 	if err != nil {
 		_, err = h.writeToUser("Error importing key, probably it is already imported!")
 		return err
 	}
-	_, err = h.writeToUser("Key imported succesefully!")
+	_, err = h.writeToUser("Key imported successfully!")
+	handlerLog.Printf("User %s@%s imported public key %s",
+		h.CurrentUser.Name,
+		h.IP,
+		key.Content,
+	)
+
 	return err
 }
 
@@ -49,13 +58,24 @@ func (h *Handler) ForgotPublicKey(connection ssh.Channel, term *terminal.Termina
 		UserID:  h.CurrentUser.ID,
 		Content: models.Hash(k),
 	}
-	err := models.DB.Table("key").Where("content=?", models.Hash(k)).First(&key).Error
+	err := models.
+		DB.
+		Table("key").
+		Where("content=?", key.Content).
+		First(&key).
+		Error
+
 	if err == nil {
 		err = models.DB.Table("key").Delete(&key).Error
 		if err != nil {
 			return err
 		}
 		h.writeToUser("Public key is removed! You'll need password in future to be able to authorize from this client.")
+		handlerLog.Printf("User %s@%s removed public key %s",
+			h.CurrentUser.Name,
+			h.IP,
+			key.Content,
+		)
 		return nil
 	}
 	if err == gorm.ErrRecordNotFound {

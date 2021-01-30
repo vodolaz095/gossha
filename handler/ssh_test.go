@@ -14,7 +14,7 @@ func (c connFakeAddr) Network() string {
 	return ""
 }
 func (c connFakeAddr) String() string {
-	return "127.0.0.1:22"
+	return "127.0.0.1:56022"
 }
 
 type connMetadataFake struct{}
@@ -62,14 +62,15 @@ func TestSqlite3LoginByUsernameAndPassword(t *testing.T) {
 	if h1.SessionID != "lalalalala" {
 		t.Error("Session Id is not set via Handler.LoginByUsernameAndPassword!")
 	}
-	if h1.IP != "127.0.0.1" {
+	t.Logf("remote ip is %s", h1.IP)
+	if h1.IP != "127.0.0.1:56022" {
 		t.Error("Remote IP  is not set via Handler.LoginByUsernameAndPassword!")
 	}
 
 	h2 := New()
 	err = h2.LoginByUsernameAndPassword(m, "wrongTestPassword")
 	if err != nil {
-		if err.Error() != "Wrong password for user testUser!" {
+		if err.Error() != "wrong password for user testUser" {
 			t.Error(err.Error())
 		}
 	} else {

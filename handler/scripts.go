@@ -107,7 +107,7 @@ func (h *Handler) ExecCommand(input []string) error {
 	if err != nil {
 		return err
 	}
-	h.writeToUser("Commands avaible:")
+	h.writeToUser("Commands available:")
 	for _, v := range files {
 		if v.Mode().Perm()&0111 != 0 {
 			h.writeToUser("  %v", v.Name())

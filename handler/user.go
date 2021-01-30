@@ -39,20 +39,16 @@ func (h *Handler) Who(args []string) error {
 				k, v.CurrentUser.Name, v.Hostname, v.IP, v.CurrentUser.IsOnline(), v.CurrentUser.LastSeenOnline.Format("15:04:05"),
 			)
 		}
-
 	}
-	h.writeToUser("")
-	h.writeToUser("")
+	h.writeToUser("Summary: %v users online", len(Board))
 	return nil
 }
 
 // Info prints additional information about yourself
 func (h *Handler) Info(args []string) error {
 	var sessions []models.Session
-
 	h.writeToUser("You are %v, logged from %v with IP of %v.", h.CurrentUser.Name, h.Hostname, h.IP)
 	h.writeToUser("Your previous sessions: ")
-
 	err := models.DB.Table("session").Find(&sessions).Where("userId=?", h.CurrentUser.ID).Error
 	if err != nil {
 		return err

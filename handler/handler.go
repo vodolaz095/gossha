@@ -2,6 +2,9 @@ package handler
 
 import (
 	"fmt"
+	"log"
+	"os"
+
 	//	"reflect"
 	"sort"
 	"strings"
@@ -12,7 +15,11 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-//TerminalInterface is interface repserenting terminal
+var handlerLog *log.Logger
+
+const timeStampFormat = "2006-01-02 15:04:05"
+
+//TerminalInterface is interface representing terminal
 type TerminalInterface interface {
 	SetPrompt(string)
 	ReadPassword(prompt string) (line string, err error)
@@ -70,6 +77,7 @@ func New() Handler {
 	h.addKnownCommand("rr", "SignUpRoot", "(R)egister new (r)oot user (you need to have `root` permissions!). Example: \\rr username password")
 	h.addKnownCommand("x", "ExecCommand", "E(X)ecutes custom user script from home directory")
 	h.addKnownCommand("passwd", "ChangePassword", "Changes current user password")
+	handlerLog = log.New(os.Stdout, "[HANDLER]", log.LstdFlags)
 	return h
 }
 

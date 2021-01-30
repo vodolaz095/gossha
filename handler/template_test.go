@@ -12,10 +12,10 @@ func TestPrintPrompt(t *testing.T) {
 	h := New()
 	h.CurrentUser.Name = "test"
 	h.IP = "8.8.8.8"
-	h.Hostname = "example.org"
 	prompt := h.PrintPrompt()
-	if prompt != fmt.Sprintf("[test@example.org [8.8.8.8] *]{%s}:", time.Now().Format("2006-1-2 15:04:05")) {
-		t.Errorf("Wrong response of %s", prompt)
+	wanted := fmt.Sprintf("{%s}[test@8.8.8.8 *]:", time.Now().Format(timeStampFormat))
+	if prompt != wanted {
+		t.Errorf("Wrong prompt:\nwanted: >>>%s<<<\ngot   :>>>%s<<<", wanted, prompt)
 	}
 }
 
@@ -37,8 +37,9 @@ func TestPrintMessage(t *testing.T) {
 		Message:   "hello",
 	}
 	prompt := h.PrintMessage(&message, &user)
-	if prompt != fmt.Sprintf("[test1@example.org [8.8.8.8] *]{%s}:hello", time.Now().Format("2006-1-2 15:04:05")) {
-		t.Errorf("Wrong response of %s", prompt)
+	wanted := fmt.Sprintf("{%s}[test1@8.8.8.8 *]:hello", time.Now().Format(timeStampFormat))
+	if prompt != wanted {
+		t.Errorf("Wrong message:\nwanted: >>>%s<<<\ngot   :>>>%s<<<", wanted, prompt)
 	}
 }
 
@@ -89,7 +90,8 @@ func TestPrintNotification(t *testing.T) {
 		t.Errorf("Error writing to mock terminal %s", err)
 	}
 	prompt := contents
-	test := fmt.Sprintf("[test1@example.org [8.8.8.8] *]{%s}:hello\n\r", time.Now().Format("2006-1-2 15:04:05"))
+	test := fmt.Sprintf(
+		"{%s}[test1@8.8.8.8 *]:hello\n\r", time.Now().Format(timeStampFormat))
 	if prompt != test {
 		t.Errorf("Wrong response of\n*%s*\ninstead of\n*%s*", prompt, test)
 	}

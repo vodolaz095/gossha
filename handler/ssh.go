@@ -7,29 +7,31 @@ package handler
 import (
 	"fmt"
 	"io/ioutil"
-	"strings"
+	"log"
+	"os"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/vodolaz095/gossha/config"
-	"github.com/vodolaz095/gossha/lib"
 	"github.com/vodolaz095/gossha/models"
 	"golang.org/x/crypto/ssh"
 )
+
+var authLog *log.Logger
 
 // LoginByUsernameAndPassword is a authorization callback for ssh config
 // see http://godoc.org/golang.org/x/crypto/ssh#ServerConfig for details
 func (h *Handler) LoginByUsernameAndPassword(c ssh.ConnMetadata, password string) error {
 	user := models.User{}
 	name := c.User()
-	ip := strings.Split(c.RemoteAddr().String(), ":")[0]
-	hostname, err := lib.GetRemoteHostname(ip)
-	if err != nil {
-		return err
-	}
+	ip := c.RemoteAddr().String()
+	//hostname, err := lib.GetRemoteHostname(ip)
+	//if err != nil {
+	//	return err
+	//}
 
 	if err := models.DB.Table("user").Where("name=?", name).First(&user).Error; err == gorm.ErrRecordNotFound {
-		return fmt.Errorf("User %v not found!", name)
+		return fmt.Errorf("user %v not found", name)
 	}
 	good, err := user.CheckPassword(password)
 	if err != nil {
@@ -39,7 +41,7 @@ func (h *Handler) LoginByUsernameAndPassword(c ssh.ConnMetadata, password string
 		h.SessionID = string(c.SessionID())
 		h.CurrentUser = user
 		h.IP = ip
-		h.Hostname = hostname
+		//h.Hostname = hostname
 		h.CurrentUser.LastSeenOnline = time.Now()
 		mesg := models.Message{
 			IP:        h.IP,
@@ -51,9 +53,9 @@ func (h *Handler) LoginByUsernameAndPassword(c ssh.ConnMetadata, password string
 		}
 		h.Broadcast(&mesg, true, false)
 		session := models.Session{
-			UserID:    user.ID,
-			IP:        ip,
-			Hostname:  hostname,
+			UserID: user.ID,
+			IP:     ip,
+			//Hostname:  hostname,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
@@ -63,7 +65,7 @@ func (h *Handler) LoginByUsernameAndPassword(c ssh.ConnMetadata, password string
 		}
 		return models.DB.Table("user").Save(&user).Error
 	}
-	return fmt.Errorf("Wrong password for user %v!", name)
+	return fmt.Errorf("wrong password for user %v", name)
 }
 
 // LoginByPublicKey is a authorization callback for ssh config
@@ -71,22 +73,22 @@ func (h *Handler) LoginByUsernameAndPassword(c ssh.ConnMetadata, password string
 func (h *Handler) LoginByPublicKey(c ssh.ConnMetadata, publicKey string) error {
 	key := models.Key{}
 	user := models.User{}
-	ip := strings.Split(c.RemoteAddr().String(), ":")[0]
-	hostname, err := lib.GetRemoteHostname(ip)
-	if err != nil {
-		return err
-	}
-	err = models.DB.Table("key").Where("content=?", publicKey).First(&key).Error
+	ip := c.RemoteAddr().String()
+	//hostname, err := lib.GetRemoteHostname(ip)
+	//if err != nil {
+	//	return err
+	//}
+	err := models.DB.Table("key").Where("content=?", publicKey).First(&key).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return fmt.Errorf("Public key is not known!")
+			return fmt.Errorf("unknown public key")
 		}
 		return err
 	}
 	err = models.DB.Table("user").Where("id=? AND name = ?", key.UserID, c.User()).First(&user).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return fmt.Errorf("User %v not found!", c.User())
+			return fmt.Errorf("user %v not found", c.User())
 		}
 		return err
 	}
@@ -94,7 +96,7 @@ func (h *Handler) LoginByPublicKey(c ssh.ConnMetadata, publicKey string) error {
 	h.SessionID = string(c.SessionID())
 	h.CurrentUser = user
 	h.IP = ip
-	h.Hostname = hostname
+	//h.Hostname = hostname
 	h.CurrentUser.LastSeenOnline = time.Now()
 
 	mesg := models.Message{
@@ -109,9 +111,9 @@ func (h *Handler) LoginByPublicKey(c ssh.ConnMetadata, publicKey string) error {
 	h.Broadcast(&mesg, true, false)
 
 	session := models.Session{
-		UserID:    user.ID,
-		IP:        ip,
-		Hostname:  hostname,
+		UserID: user.ID,
+		IP:     ip,
+		//Hostname:  hostname,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
@@ -126,6 +128,8 @@ func (h *Handler) LoginByPublicKey(c ssh.ConnMetadata, publicKey string) error {
 // to this handler context
 // see http://godoc.org/golang.org/x/crypto/ssh#ServerConfig for details
 func (h *Handler) MakeSSHConfig() *ssh.ServerConfig {
+	authLog = log.New(os.Stdout, "[AUTH]", log.LstdFlags)
+
 	sshConfig := &ssh.ServerConfig{
 		PasswordCallback: func(c ssh.ConnMetadata, pass []byte) (*ssh.Permissions, error) {
 			return nil, h.LoginByUsernameAndPassword(c, string(pass))
@@ -137,9 +141,9 @@ func (h *Handler) MakeSSHConfig() *ssh.ServerConfig {
 		},
 		AuthLogCallback: func(c ssh.ConnMetadata, method string, err error) {
 			if err == nil {
-				fmt.Printf("Connection success from %v@%v via %v\n", c.User(), c.RemoteAddr(), method)
+				authLog.Printf("User %v@%v connected via %v\n", c.User(), c.RemoteAddr(), method)
 			} else {
-				fmt.Printf("Connection fail from %v@%v via %v. Reason: %v\n", c.User(), c.RemoteAddr(), method, err.Error())
+				authLog.Printf("User %v@%v failed to connect via %v, because %v\n", c.User(), c.RemoteAddr(), method, err.Error())
 			}
 		},
 		NoClientAuth: false,
