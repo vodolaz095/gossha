@@ -1,5 +1,5 @@
 export app=gossha
-export semver=2.0.0
+export semver=2.1.0
 export arch=$(shell uname)-$(shell uname -m)
 export gittip=$(shell git log --format='%h' -n 1)
 export ver=$(semver).$(gittip).$(arch)
