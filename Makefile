@@ -13,7 +13,10 @@ deps:
 	go mod verify
 	go mod tidy
 
-check: deps
+check: deps lint
+# TODO
+
+lint:
 	gofmt  -w=true -s=true -l=true ./
 	golint ./..
 	go vet
