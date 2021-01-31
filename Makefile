@@ -18,8 +18,7 @@ check: deps lint
 
 # Install git hooks
 install_git_hooks:
-	cp hooks/pre-commit .git/hooks/pre-commit
-	chmod a+x .git/hooks/pre-commit
+	git config --global core.hooksPath .githooks/
 
 lint:
 	gofmt  -w=true -s=true -l=true ./
