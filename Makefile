@@ -16,6 +16,11 @@ deps:
 check: deps lint
 # TODO
 
+# Install git hooks
+install_git_hooks:
+	cp hooks/pre-commit .git/hooks/pre-commit
+	chmod a+x .git/hooks/pre-commit
+
 lint:
 	gofmt  -w=true -s=true -l=true ./
 	golint ./..
