@@ -213,7 +213,15 @@ func (h *Handler) GetMessages(limit int) ([]models.Notification, error) {
 	var ret []models.Notification
 	var messages []models.Message
 	var l int64
-	err := models.DB.Table("message").Preload("User").Where("message.id > ?", h.LastShownMessageID).Limit(limit).Order("message.id asc").Find(&messages).Error
+	err := models.
+		DB.
+		Table("message").
+		Preload("User").
+		Where("message.id > ?", h.LastShownMessageID).
+		Limit(limit).
+		Order("message.id asc").
+		Find(&messages).
+		Error
 	if err != nil {
 		return ret, err
 	}
