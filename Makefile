@@ -14,7 +14,8 @@ deps:
 	go mod tidy
 
 check: deps lint
-# TODO
+	go test -v ./...
+
 
 # Install git hooks
 install_git_hooks:
