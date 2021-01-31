@@ -1,8 +1,7 @@
 language: go
 
 go:
-  - 1.5
-  - tip
+  - 1.14
 
 before_script:
   - psql -c 'create database gossha_test;' -U postgres
