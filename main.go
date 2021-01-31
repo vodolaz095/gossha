@@ -28,12 +28,12 @@ func main() {
 
 	cfg, err := config.InitConfig()
 	if err != nil {
-		panic(fmt.Errorf("Fatal error while creating config file: %s \n", err))
+		panic(fmt.Errorf("%s - creating config file", err))
 	}
 
 	err = models.InitDatabase(cfg.Driver, cfg.ConnectionString, cfg.Debug)
 	if err != nil {
-		panic(fmt.Errorf("Fatal error while initializing database: %s \n", err))
+		panic(fmt.Errorf("%s - creating config file", err))
 	}
 	cli.ProcessConsoleCommand()
 }

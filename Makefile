@@ -16,6 +16,9 @@ deps:
 check: deps lint
 	go test -v ./...
 
+golint:
+	cd ~ && go get -u golang.org/x/lint/golint
+	golint
 
 # Install git hooks
 install_git_hooks:
