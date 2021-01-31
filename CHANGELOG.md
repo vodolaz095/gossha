@@ -1,3 +1,11 @@
+# v 2.1.0
+Improve password hashing. Introduce golang modules.
+
+- Introduce golang [modules](https://golang.org/ref/mod) for dependency managment.
+- Passwords are now hashed using [Argon2](https://github.com/alexedwards/argon2id) algorithm.
+- Code can be compiled using Golang 1.14.13 now on centos8 machine.
+
+
 # v 2.0.0
 Newer dependencies. Code strongly refactored.
 Breaking changes:
@@ -21,10 +29,10 @@ Ability to set password for users from shell by calling
 ```shell
 
 	$ gossha passwd user password
-	$ gossha root user password	
+	$ gossha root user password
 
 ```
-	
+
 Many typos fixed. Dockerfile provided.
 
 # v 1.1.4
